@@ -1,0 +1,16 @@
+body{
+    color: blue;
+    background-color: gray;
+}
+.form-box {
+    max-width: 400px;
+    margin: auto; 
+    padding: 20px; 
+    border: 1px solid #ccc; 
+    border-radius: 10px; 
+}
+h1{color: red;}
+.item {
+    margin-bottom: 15px; 
+}
+

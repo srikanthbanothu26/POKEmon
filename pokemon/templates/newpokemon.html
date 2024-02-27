@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/newpokemon.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-800">
+    <h1 class="text-center mb-8 text-4xl text-white">ADD POKEMON DETAILS</h1>
+    <div class="form-box text-white">
+        <form method="POST" action="/new">
+            {{ form.hidden_tag() }}
+            <div class="item flex justify-between">
+                <label >{{ form.name.label }}</label>
+                {{ form.name() }}
+            </div>
+            <div class="item flex justify-between">
+                <label >{{ form.image_url.label }}</label>
+                {{ form.image_url() }}
+            </div>
+            <div class="item flex justify-between">
+                <label >{{ form.description.label }}</label>
+                {{ form.description() }}
+            </div>
+            <div class="item flex justify-between">
+                <label >{{ form.height.label }}</label>
+                {{ form.height() }}
+            </div>
+            <div class="item flex justify-between">
+                <label >{{ form.weight.label }}</label>
+                {{ form.weight() }}
+            </div>
+            <div class="item flex justify-between">
+                <label >{{ form.category.label }}</label>
+                {{ form.category() }}
+            </div>
+            <div class="item flex justify-between">
+                <label >{{ form.abilities.label }}</label>
+                {{ form.abilities() }}
+            </div>
+            <div class="item text-2xl cursor-pointer  text-center">
+                <button type="submit" class="cursor-pointer bg-white rounded-lg text-green-900 p-2 w-3/4">submit</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

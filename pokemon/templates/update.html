@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">     
+    <title>Update Pokemon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-cover h-screen" style="background-image:url('https://c4.wallpaperflare.com/wallpaper/576/259/776/pirates-of-the-caribbean-ship-schooner-desert-hd-wallpaper-preview.jpg')">
+    <div class="flex flex-col items-center">
+        <div class="items mb-8 text-4xl text-white">
+            <h1>Update Pokemon</h1>
+        </div>
+        <div class="flex items-center bg-black border-2 rounded-md">
+            <form method="POST" action="/update/{{ existing_data.id }}">
+                <div class="update_items flex-cols justify-around bg-contain bg-no-repeat h-full" style="background-image:url('https://static.scientificamerican.com/sciam/cache/file/C0656DED-EDE2-49EC-A2F58A9135049E59_source.jpg?w=1350')"> 
+                    {{ form.hidden_tag() }}
+                    <div class="item p-4 flex justify-between">
+                        <p class="text-white">{{ form.name.label }}<p>
+                        <p class="border-2">{{ form.name(size=32) }}</p>
+                    </div>
+                    <div class="item m-4 flex justify-between">
+                        <p class="text-white">{{ form.image_url.label }}</p>
+                        <p class="border-2 ml-8">{{ form.image_url(size=64) }}</p>
+                    </div>
+                    <div class="item m-4 flex justify-between">
+                        <p class="text-white">{{ form.description.label }}</p>
+                        <p class="border-2">{{ form.description(rows=4, cols=50) }}</p>
+                    </div>
+                    <div class="item m-4 flex justify-between">
+                        <p class="text-blue-800">{{ form.height.label }}</p>
+                        <p class="border-2">{{ form.height() }}</p>
+                    </div>
+                    <div class="item m-4 flex justify-between">
+                        <p class="text-white">{{ form.weight.label }}</p>
+                        <p class="border-2">{{ form.weight() }}</p>
+                    </div>
+                    <div class="item m-4 flex justify-between">
+                        <p class="text-white">{{ form.category.label }}</p>
+                        <p class="border-2">{{ form.category() }}</p>
+                    </div>
+                    <div class="item m-4 flex justify-between">
+                        <p class="text-white">{{ form.abilities.label }}</P>
+                        <p class="border-2">{{ form.abilities() }}</P>
+                    </div>
+                    <div class="flex justify-center">
+                        <button class="text-2xl bg-green-800 mb-4 w-3/4 text-white border-2 rounded-lg" type="submit">update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>    
+</body>
+</html>

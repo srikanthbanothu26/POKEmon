@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-red-600 bg-cover h-screen" style="background-image:url('https://img.freepik.com/free-vector/abstract-banner-with-low-poly-plexus-network-communications-design_1048-12914.jpg?w=1380&t=st=1708618261~exp=1708618861~hmac=d7f3b5b97e6f3b03b51392044e6d57b94eb7e289933e77963df6a2f988250854')">
+    <div class="flex justify-center items-center h-screen">
+        <form method="post" action="/login" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            {{ form.hidden_tag() }}
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                    email
+                </label>
+                <input type="text" placeholder="email" name="email" required
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    Password
+                </label>
+                <input type="password" placeholder="Enter Password" name="password" required
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                 Login
+                </button>
+                <label class="block text-gray-700 text-sm" for="remember">
+                    <input type="checkbox" checked="checked" name="remember" class="mr-2 leading-tight">
+                    Remember me
+                </label>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+        

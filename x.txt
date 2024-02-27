@@ -1,0 +1,212 @@
+from flask import Flask, render_template, redirect, request, flash
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, FloatField, TextAreaField, PasswordField
+from wtforms.validators import DataRequired, Length
+from flask_sqlalchemy import SQLAlchemy
+import requests
+from io import BytesIO
+from PIL import Image
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret-key'
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://avnadmin:AVNS_mEQfCEIkupo_GdLjlhc@mysql-323302ad-banothusrikanth267-d588.a.aivencloud.com:26621/defaultdb"
+
+db = SQLAlchemy(app)
+
+class Pokemon(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    image_url = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
+    height = db.Column(db.Float, nullable=False)
+    weight = db.Column(db.Float, nullable=False)
+    category = db.Column(db.String(100), nullable=False)
+    abilities = db.Column(db.String(200), nullable=False)
+    image_path = db.Column(db.String(200), nullable=True)
+
+class MyForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    image_url = StringField("Image URL", validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired(), Length(max=500)])
+    height = FloatField('Height (cm)', validators=[DataRequired()])
+    weight = FloatField('Weight (kg)', validators=[DataRequired()])
+    category = StringField("Category", validators=[DataRequired()])
+    abilities = StringField("Abilities", validators=[DataRequired()])
+    submit = SubmitField('Submit')
+    
+def create_table():
+    db.create_all()   
+    
+    
+class RegistrationForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    cpassword = PasswordField("Confirm Password", validators=[DataRequired()])
+    submit = SubmitField("Register")
+
+class LoginForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Login")
+    
+    
+
+class USER(db.Model): 
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    password = db.Column(db.String(200), nullable=False, unique=True)
+    
+with app.app_context():
+    db.create_all()
+
+
+@app.route("/",methods=["GET","POST"])
+def index():
+    return render_template("index.html")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        password = form.password.data
+        cpassword = form.cpassword.data
+        if password == cpassword:
+            insert_user(name, password)
+            flash("Registration successful. You can now log in.", "success")
+            return redirect("/login")
+        else:
+            flash("Passwords do not match", "error")
+    return render_template("registration.html", form=form)
+
+
+def user_details(username):
+    return USER.query.filter_by(name=username).first()
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        password = form.password.data
+        
+        user = USER.query.filter_by(name=name, password=password).first()
+        if user:
+            return redirect("/main")
+        else:
+            flash("Invalid credentials. Please try again.", "error")
+    return render_template("login.html", form=form)
+
+def insert_user(name,password):
+    user=USER(name=name,password=password)
+    db.session.add(user)
+    db.session.commit()
+
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(f"Error in {getattr(form, field).label.text}: {error}", "error")
+
+
+def insert_pokemon_data(name, image_url, description, height, weight, category, abilities, image_path):
+    new_pokemon = Pokemon(name=name, image_url=image_url, description=description, height=height,
+                          weight=weight, category=category, abilities=abilities, image_path=image_path)
+    db.session.add(new_pokemon)
+    db.session.commit()
+
+def fetch_pokemon_details():
+    return Pokemon.query.all()
+
+def delete_pokemon_data(pokemon_id):
+    pokemon = Pokemon.query.get(pokemon_id)
+    db.session.delete(pokemon)
+    db.session.commit()
+
+def fetch_pokemon_by_id(pokemon_id):
+    return Pokemon.query.get(pokemon_id)
+
+def update_pokemon_data(pokemon_id, form):
+    pokemon = Pokemon.query.get(pokemon_id)
+    pokemon.name = form.name.data
+    pokemon.image_url = form.image_url.data
+    pokemon.description = form.description.data
+    pokemon.height = form.height.data
+    pokemon.weight = form.weight.data
+    pokemon.category = form.category.data
+    pokemon.abilities = form.abilities.data
+    db.session.commit()
+
+
+@app.route("/main", methods=["GET", "POST"])
+def main():
+    user_details1 = None
+    if request.method == "POST":
+        search_term = request.form.get("search_term")
+        details = search_pokemon(search_term)
+        user_details1 = user_details('username')
+        
+    else:
+        details = fetch_pokemon_details()
+    
+    return render_template("main.html", details=details,user_details1=user_details1)
+
+def search_pokemon(search_term):
+    return Pokemon.query.filter((Pokemon.name.like(f'%{search_term}%')) | (Pokemon.id == search_term)).all()
+
+@app.route("/new", methods=["GET", "POST"])
+def new():
+    form = MyForm(request.form)
+    if request.method == "POST":
+        if form.validate_on_submit():
+            name = form.name.data
+            image_url = form.image_url.data
+            description = form.description.data
+            height = form.height.data
+            category = form.category.data
+            weight = form.weight.data
+            abilities = form.abilities.data
+
+            image_response = requests.get(image_url)
+            if image_response.status_code == 200:
+                image_data = BytesIO(image_response.content)
+                image = Image.open(image_data)
+                image_filename = f"{name.replace(' ', '_')}.png"
+                image_path = f"static/images/{image_filename}"  # Fixed image path
+
+                image.save(image_path)
+            else:
+                image_path = None
+
+            insert_pokemon_data(name, image_url, description, height, weight, category, abilities, image_path)
+
+            return redirect("/main")
+
+    return render_template("newpokemon.html", form=form)
+
+@app.route("/delete/<int:pokemon_id>", methods=["POST"])
+def delete(pokemon_id):
+    delete_pokemon_data(pokemon_id)
+    return redirect("/main")
+
+@app.route("/update/<int:pokemon_id>", methods=["GET", "POST"])
+def update(pokemon_id):
+    form = MyForm()
+
+    existing_data = fetch_pokemon_by_id(pokemon_id)
+
+    if request.method == "POST" and form.validate_on_submit():
+        update_pokemon_data(pokemon_id, form)
+        return redirect("/main")
+
+    form.name.data = existing_data.name
+    form.image_url.data = existing_data.image_url
+    form.description.data = existing_data.description
+    form.height.data = existing_data.height
+    form.weight.data = existing_data.weight
+    form.category.data = existing_data.category
+    form.abilities.data = existing_data.abilities
+
+    return render_template("update.html", form=form, existing_data=existing_data)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=9000)

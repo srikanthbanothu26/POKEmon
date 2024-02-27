@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>profile</title>
+    <link rel="icon" href="static\img\Screenshot 2024-02-27 at 11-01-46 Colors LOGO.com1.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="flex flex-col items-center">
+
+        <div class="w-24 h-24 border rounded-full border-blue-300 relative overflow-hidden	">
+            <img src="{{ url_for('static', filename='images/profile/'+user.avatar) }}" alt="user profile pic" class="w-full object-cover h-full object-center">
+    
+                <form action="/profile/avatar-update" method="post" class="absolute bottom-0 left-1/2 -translate-x-1/2 bg-slate-500/30 w-full text-center hover:bg-black hover:text-white cursor-pointer" enctype="multipart/form-data">
+                    <label for="edit-avatar">edit</label>
+                    <!-- only allow images (png, jpg, jpeg) -->
+                    <input type="file" name="avatar" id="edit-avatar" class="hidden" accept="image/png, image/jpg, image/jpeg">
+                </form>
+        </div>
+        
+        <h1>{{ user.username }}</h1>
+        <h2>
+            {{ user.email}}
+        </h2>
+    
+        <button id="updateButton" onclick="updateProfile()" class="bg-blue-500/40 text-white px-4 py-2 rounded-md mt-4" disabled>
+            update profile
+        </button>
+    </div>
+    
+    
+    <script>
+        function updateProfile() {
+            // get the form and submit it
+    
+            const form = document.querySelector('form');
+            form.submit();
+        }
+        const updateBtn = document.getElementById('updateButton');
+    
+        const inputFile = document.getElementById('edit-avatar');
+    
+        inputFile.addEventListener('change', () => {
+            updateBtn.disabled = false;
+            // remove class bg-slate-500/40 and add bg-blue-500
+            updateBtn.classList.remove('bg-blue-500/40');
+            updateBtn.classList.add('bg-blue-500');
+    
+            // change the image in the img tag
+            const file = inputFile.files[0];
+    
+            // file reader -> read the file
+            const reader = new FileReader();
+    
+            reader.onload = (e) => {
+                const img = document.querySelector('img');
+                img.src = e.target.result;
+            }
+    
+            reader.readAsDataURL(file);
+    
+        });
+    
+    </script>
+</body>    
+
+  

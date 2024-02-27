@@ -1,0 +1,105 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: black;
+}
+
+h1 {
+    color: #333;
+    background-color: aqua;
+}
+
+h1:hover {
+    color: lemonchiffon;
+    background-color: cadetblue;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.pokemoncontainer {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.pokemon {
+    color: #333;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 15px;
+    width: 420px;
+    margin: 10px;
+    box-sizing: border-box;
+    text-align: center;
+    cursor: pointer;
+    animation-name: loading1;
+    animation-duration: 10s;
+    animation-timing-function: linear;
+    animation-iteration-count: inherit;
+    animation-direction: alternate-reverse;
+    border: 4px solid white;
+    border-bottom: 4px solid blue;
+    border-top: 8px solid blue;
+}
+
+@keyframes loading1 {
+    0% {
+        margin-left: 0px;
+    }
+    30% {
+        background-color: yellowgreen;
+    }
+    79% {
+        background-color: yellow;
+    }
+    100% {
+        margin-left: calc(100% - 80px);
+        background-color: blue;
+    }
+}
+
+.pokemon:hover {
+    color: wheat;
+}
+
+.pokemon img {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    height: 200px;
+}
+
+.add_pokemon {
+    margin-top: 10px;
+}
+
+.add_pokemon input {
+    background-color: blueviolet;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.add_pokemon input:hover {
+    background-color: #4caf50;
+}
+
+.pokemoncontainer form {
+    width: 100px;
+    height: 20px;
+    padding-right: 20px;
+}
+.pokemoncontainer form input {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
