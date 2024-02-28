@@ -11,11 +11,11 @@ class Pokemon(db.Model):
     weight = db.Column(db.Float, nullable=False)
     category = db.Column(db.String(100), nullable=False)
     abilities = db.Column(db.String(200), nullable=False)
-    image_path = db.Column(db.String(200), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    like=db.Column(db.Integer,nullable=False)
+    like_count = db.Column(db.Integer, default=0)  # New column to store the number of likes
 
-class USER1(UserMixin,db.Model):
+
+class USER1(UserMixin, db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
@@ -23,6 +23,7 @@ class USER1(UserMixin,db.Model):
     password = db.Column(db.String(200), nullable=False, unique=True)
     profile_image = db.Column(db.String(255), nullable=False, default="default.png")
     pokemons = db.relationship("Pokemon", backref="user", lazy=True)
+    likes = db.relationship("LIKE_S", backref="user", lazy=True)
 
     def check_pwd_hash(self, password):
         return check_password_hash(self.password, password)
@@ -30,7 +31,7 @@ class USER1(UserMixin,db.Model):
     def to_dict(self):
         return {
             "user_id": self.id,
-            "username": self.name,  # Corrected attribute name
+            "username": self.name,
             "email": self.email,
         }
 
@@ -39,3 +40,4 @@ class LIKE_S(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.id'), nullable=False)
+    liked = db.Column(db.Boolean, default=False)

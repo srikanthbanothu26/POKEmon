@@ -30,8 +30,17 @@
     <div class="pokemoncontainer grid grid-cols-4 mt-4 justify-center">
         {% for poke in details %}
         <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center">
-            <!-- Like count -->
-            <p class="text-white">Like count: <span id="like-count-{{ poke.id }}" class="text-white">{{ poke.like }}</span></p>
+            <div class="grid grid-cols-2 mb-4">
+                <button class="like-button {% if poke.liked %}liked{% endif %}" type="button" data-pokemon-id="{{ poke.id }}">
+                    {% if poke.liked %}
+                        ❤️ <!-- Red heart if liked -->
+                    {% else %}
+                        🤍 <!-- White heart if not liked -->
+                    {% endif %}
+                </button>                                                                  
+                <!-- Like count -->
+                <p class="text-white">Like count: <span id="like-count-{{ poke.id }}" class="text-white">{{ poke.like_count }}</span></p>
+            </div>  
             <!-- Profile image or username -->
             {% if poke.user_id == current_user.id %}
                 {% if current_user.profile_image %}
@@ -67,72 +76,61 @@
                     <button type="submit" class="p-2 bg-green-500 text-white rounded-md">Update Pokemon</button>
                 </form>
             </div>
-            <!-- Like button -->
-            <!-- Like button -->
-            <!-- Like button -->
-            <button class="like-button text-white bg-blue-600" type="button" data-pokemon-id="{{ poke.id }}">Like</button>
         </div>
         {% endfor %}
     </div> 
-</body>  
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const likeButtons = document.querySelectorAll('.like-button');
-            likeButtons.forEach(button => {
-                button.addEventListener('click', (event) => {
-                    event.preventDefault(); // Prevent the default behavior of the button
-        
-                    const pokemonId = button.dataset.pokemonId;
-                    console.log('Clicked like button for Pokemon ID:', pokemonId); // Add this line
-                    
-                    fetch(`/like/${pokemonId}`, { method: 'POST' })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Response from server:', data); // Add this line
-                            
-                            // Update the like count on the frontend
-                            const likeCountSpan = document.querySelector(`#like-count-${pokemonId}`);
-                            if (likeCountSpan) {
-                                likeCountSpan.textContent = data.likeCount;
-                            }
-                            // Change the button color and text based on liking/unliking
-                            if (data.liked) {
-                                button.classList.add('text-red');
-                                button.textContent = 'Unlike';
-                            } else {
-                                button.classList.remove('text-red');
-                                button.textContent = 'Like';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error liking Pokémon:', error);
-                        });
-                });
-            });
-        });
-    </script>
-    <script>
-        // Add console.log() statements similarly for the other event listener
-        document.addEventListener('DOMContentLoaded', function () {
-            const otherUserProfiles = document.querySelectorAll('.other-user-profile-image');
-            otherUserProfiles.forEach(profile => {
-                const userId = profile.dataset.userId;
-                console.log('Fetching profile image for user ID:', userId); // Add this line
-                
-                fetch(`/get_profile_image/${userId}`)
+</body> 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const likeButtons = document.querySelectorAll('.like-button');
+        likeButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent the default behavior of the button
+
+                const pokemonId = button.dataset.pokemonId;
+                console.log('Clicked like button for Pokemon ID:', pokemonId); // Add this line
+
+                fetch(`/like/${pokemonId}`, { method: 'POST' })
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Response from server for profile image:', data); // Add this line
-                        
-                        if (data.profile_image) {
-                            const img = document.createElement('img');
-                            img.src = data.profile_image;
-                            img.alt = 'Profile Image';
-                            img.classList.add('h-10', 'w-10', 'rounded-full', 'mb-2');
-                            profile.appendChild(img);
+                        console.log('Response from server:', data); // Add this line
+
+                        // Change the button text based on liking/unliking
+                        if (data.liked) {
+                            button.innerHTML = '❤️'; // Change to red heart if liked
+                        } else {
+                            button.innerHTML = '🤍'; // Change to white heart if unliked
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error liking Pokémon:', error);
                     });
             });
         });
-    </script>
+    });
+</script>
+<script>
+    // Add console.log() statements similarly for the other event listener
+    document.addEventListener('DOMContentLoaded', function () {
+        const otherUserProfiles = document.querySelectorAll('.other-user-profile-image');
+        otherUserProfiles.forEach(profile => {
+            const userId = profile.dataset.userId;
+            console.log('Fetching profile image for user ID:', userId); // Add this line
+            
+            fetch(`/get_profile_image/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response from server for profile image:', data); // Add this line
+                    
+                    if (data.profile_image) {
+                        const img = document.createElement('img');
+                        img.src = data.profile_image;
+                        img.alt = 'Profile Image';
+                        img.classList.add('h-10', 'w-10', 'rounded-full', 'mb-2');
+                        profile.appendChild(img);
+                    }
+                });
+        });
+    });
+</scrip>
 </html>
