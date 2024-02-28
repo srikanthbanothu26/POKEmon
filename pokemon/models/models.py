@@ -1,5 +1,6 @@
 from pokemon.extensions.db import db
 from werkzeug.security import check_password_hash
+from flask_login import UserMixin
 
 class Pokemon(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -13,7 +14,7 @@ class Pokemon(db.Model):
     image_path = db.Column(db.String(200), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user1.id"), nullable=False)
 
-class USER1(db.Model): 
+class USER1(UserMixin,db.Model): 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     email = db.Column(db.String(50), nullable=False, unique=True)

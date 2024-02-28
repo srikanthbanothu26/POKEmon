@@ -51,3 +51,5 @@ def update_pokemon_data(pokemon_id, form):
     pokemon.abilities = form.abilities.data
     db.session.commit()
 
+def fetch_user_pokemon(user_id):
+    return Pokemon.query.filter_by(user_id=user_id).all()
