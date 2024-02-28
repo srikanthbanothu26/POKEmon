@@ -1,6 +1,6 @@
 from flask import flash
 from pokemon.routes import *
-from pokemon.models.models import USER1, Pokemon
+from pokemon.models.models import USER1, Pokemon,LIKE_S
 from pokemon.extensions.db import db
 
 
@@ -53,3 +53,34 @@ def update_pokemon_data(pokemon_id, form):
 
 def fetch_user_pokemon(user_id):
     return Pokemon.query.filter_by(user_id=user_id).all()
+
+
+# Assuming you have a User model and a Like model in your `pokemon.models.models` module
+
+
+def user_has_liked_pokemon(user_id, pokemon_id):
+    """
+    Check if the user has already liked the specified Pokémon post.
+    """
+    like = LIKE_S.query.filter_by(user_id=user_id, pokemon_id=pokemon_id).first()
+    return like is not None
+
+def like_pokemon(user_id, pokemon_id):
+    """
+    Like the specified Pokémon post for the given user.
+    """
+    if not user_has_liked_pokemon(user_id, pokemon_id):
+        like = LIKE_S(user_id=user_id, pokemon_id=pokemon_id)
+        db.session.add(like)
+        db.session.commit()
+        return True
+
+def unlike_pokemon(user_id, pokemon_id):
+    """
+    Unlike the specified Pokémon post for the given user.
+    """
+    like = LIKE_S.query.filter_by(user_id=user_id, pokemon_id=pokemon_id).first()
+    if like:
+        db.session.delete(like)
+        db.session.commit()
+        return True

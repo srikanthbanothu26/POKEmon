@@ -33,3 +33,9 @@ class USER1(UserMixin,db.Model):
             "username": self.name,  # Corrected attribute name
             "email": self.email,
         }
+
+class LIKE_S(db.Model):
+    __tablename__ = "likes"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.id'), nullable=False)

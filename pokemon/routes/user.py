@@ -38,3 +38,10 @@ def upload_profile_image():
         flash('Profile image updated successfully', 'success')
         return redirect('/profile_user') 
     return 'Upload Profile Image route'
+
+from flask import send_from_directory
+
+@user_bp.route('/get_profile_image/<int:user_id>')
+def get_profile_image(user_id):
+    # Replace 'profile_images_directory' with the actual directory path where images are stored
+    return send_from_directory('profile_images_directory', f'{user_id}.jpg')

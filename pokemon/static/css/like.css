@@ -1,0 +1,21 @@
+/* styles.css */
+.post {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+}
+
+.like-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.like-button.liked {
+    background-color: #e74c3c;
+}
+
+.like-count {
+    margin-left: 10px;
+}

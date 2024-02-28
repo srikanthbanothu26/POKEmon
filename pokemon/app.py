@@ -1,10 +1,10 @@
-from flask import Flask,send_from_directory
+from flask import Flask, send_from_directory
+import os
 from pokemon.extensions.db import db
 from pokemon.extensions.migrate import migration
 from pokemon.extensions.login_manager import login_manager
-from pokemon.models import USER1 
+from pokemon.models import USER1
 from pokemon.routes import main, auth, poker, user
-import os
 
 def load_config(app):
     app.config["SECRET_KEY"] = "secret"
@@ -30,16 +30,20 @@ def create_app():
     db.init_app(server)
     migration.init_app(server, db)
     login_manager.init_app(server)
-    register_upload_route(server)
+    register_upload_route(server)  # Register the upload route
     @login_manager.user_loader
+    
     def load_user(user_id):
         return USER1.query.get(int(user_id))
     
     create_upload_folder(server)
-        
+    with server.app_context():
+        db.create_all()  # Corrected missing parentheses to invoke the function
+    
     return server
 
 def register_upload_route(app):
     @app.route('/uploads/<filename>')
     def uploaded_file(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
