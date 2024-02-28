@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="static\css\main.css">
 </head>
-
 <body class="font-mono bg-black">
-    <div class="cursor-pointer bg-gray-500 text-white">
-        <h1 class="text-3xl p-4 text-center">Welcome</h1>
-        <div class="flex justify-end">
-            <a href="/profile_user">profile</a>
+    <!--headers-->
+    <div class="flex cursor-pointer bg-gray-500 text-white w-full h-auto items-center">
+        <div class="w-full">
+            <h1 class="text-3xl p-4 text-center">Welcome</h1>
+        </div>
+        <div class="flex mr-4 items-center">
+            <a href="/profile_user" class="flex border-2 rounded-lg items-center h-8  p-2">profile</a>
         </div>
     </div>
     <form method="POST" action="/main" class="flex gap-4 flex-wrap justify-end items-center mt-5">
@@ -22,9 +23,19 @@
     <form method="post" action="/new" class="flex justify-start mt-4">
         <button type="submit" class="p-2 ml-5 text-white rounded-md bg-red-600 hover:bg-green-500 cursor-pointer">Tap to add a Pokemon</button>
     </form>
+    <!--pokemon container-->
     <div class="pokemoncontainer grid grid-cols-4 mt-4 justify-center">
         {% for poke in details %}
         <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center">
+            {% if poke.user_id == current_user.id %}
+                {% if current_user.profile_image %}
+                <div class="flex justify-end">
+                    <img id="profileImage" src="{{ url_for('uploaded_file', filename=current_user.profile_image) }}" alt="Profile Image" class="h-10 w-10 rounded-full mb-2">
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="other-user-profile-image" data-user-id="{{ poke.user_id }}"></div>
+            {% endif %}
             <h2 class="heading bg-pink-600 text-xl">{{ poke.name }}</h2>
             <p class="id hover:text-blue-800">ID: {{ poke.id }}</p>
             <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md mb-4 h-52 ">
@@ -50,7 +61,26 @@
         </div>
         {% endfor %}
     </div>
+    <!--js script-->
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const otherUserProfiles = document.querySelectorAll('.other-user-profile-image');
+            otherUserProfiles.forEach(profile => {
+                const userId = profile.dataset.userId;
+                fetch(`/get_profile_image/${userId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.profile_image) {
+                            const img = document.createElement('img');
+                            img.src = data.profile_image;
+                            img.alt = 'Profile Image';
+                            img.classList.add('h-10', 'w-10', 'rounded-full', 'mb-2');
+                            profile.appendChild(img);
+                        }
+                    });
+            });
+        });
+    </script>
 </body>
-
 </html>

@@ -17,7 +17,6 @@ def register():
         email = form.email.data
         cpassword = form.cpassword.data
         if password == cpassword:
-            # Hash the password before storing it in the database
             hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
             insert_user(name, email, hashed_password)
             flash("Registration successful. You can now log in.", "success")
@@ -34,9 +33,8 @@ def login():
         password = form.password.data
         user = USER1.query.filter_by(email=email).first()
         if user and bcrypt.check_password_hash(user.password, password):
-            # Log in the user using Flask-Login's login_user function
             login_user(user)
-            return redirect("/main")  # Redirect to the main page after successful login
+            return redirect("/main") 
         else:
             flash("Invalid credentials. Please try again.", "error")
     return render_template("login.html", form=form)

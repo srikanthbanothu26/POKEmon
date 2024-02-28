@@ -1,8 +1,5 @@
-
-
 from flask import  render_template,request,Blueprint,redirect
 from pokemon.oper.oper import *
-from flask_login import login_required
 
 main_bp=Blueprint("main",__name__)
 
@@ -17,8 +14,7 @@ def main():
         search_term = request.form.get("search_term")
         details = search_pokemon(search_term)
         user_details1 = user_details('username')
-
-        
+     
     else:
         details = fetch_pokemon_details()
     

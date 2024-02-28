@@ -3,67 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>profile</title>
-    <link rel="icon" href="static\img\Screenshot 2024-02-27 at 11-01-46 Colors LOGO.com1.ico">
+    <title>Profile</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/Screenshot 2024-02-27 at 11-01-46 Colors LOGO.com1.ico') }}">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 </head>
-<body>
-    <div class="flex flex-col items-center">
-
-        <div class="w-24 h-24 border rounded-full border-blue-300 relative overflow-hidden	">
-            <img src="{{ url_for('static', filename='images/profile/'+user.avatar) }}" alt="user profile pic" class="w-full object-cover h-full object-center">
-    
-                <form action="/profile/avatar-update" method="post" class="absolute bottom-0 left-1/2 -translate-x-1/2 bg-slate-500/30 w-full text-center hover:bg-black hover:text-white cursor-pointer" enctype="multipart/form-data">
-                    <label for="edit-avatar">edit</label>
-                    <!-- only allow images (png, jpg, jpeg) -->
-                    <input type="file" name="avatar" id="edit-avatar" class="hidden" accept="image/png, image/jpg, image/jpeg">
-                </form>
+<body class="text-black">
+    <!--profile section-->
+    <div class="grid grid-cols-1">
+        {% if current_user.profile_image %}
+        <div class="bg-blue-600 w-full flex flex-row">
+            <h1>{{current_user.email}}</p>
+            {% set image_path = url_for('uploaded_file', filename=current_user.profile_image) %}
+            <div class="flex relative items-end h-20">
+                <img id="profileImage" src="{{ image_path }}" alt="Profile Image" class="h-20 rounded-full w-20 fixed object-center">
+                <button id="editButton" class="flex rounded-full absolute bg-gray-400 ml-4 mb-1" onclick="showUploadForm()">upload</button>
+            </div>
         </div>
-        
-        <h1>{{ user.username }}</h1>
-        <h2>
-            {{ user.email}}
-        </h2>
-    
-        <button id="updateButton" onclick="updateProfile()" class="bg-blue-500/40 text-white px-4 py-2 rounded-md mt-4" disabled>
-            update profile
-        </button>
+        {% endif %}
+        <div id="uploadFormContainer" style="display: none;">
+            <form id="uploadForm" method="post" action="/upload_profile_image" enctype="multipart/form-data">
+                <input type="file" name="profile_image" accept="image/jpeg, image/png">
+                <button class="bg-green-600 rounded-md "type="submit">Upload</button>
+            </form>            
+        </div>
     </div>
-    
-    
+    <a href="/main">BACK</a>
+    <!--pokemon section-->
+    <div class="pokemoncontainer grid grid-cols-4 mt-4 justify-center text-black">
+        {% for poke in user_pokemons %}
+        <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center">
+            {% if current_user.profile_image %}
+            {% set image_path = url_for('uploaded_file', filename=current_user.profile_image) %}
+            <div class="flex justify-end mb-2">
+                <img id="profileImage" src="{{ image_path }}" alt="Profile Image" class="h-10 w-10 rounded-full">
+            </div>
+            {% endif %}
+            <h2 class="heading bg-pink-600 text-xl">{{ poke.name }}</h2>
+            <p class="id hover:text-blue-800">ID: {{ poke.id }}</p>
+            <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md mb-4 h-52">
+            <div class="h-36 mb-4">
+                <p class="description inline">Description: {{ poke.description }}</p>
+            </div>
+            <div class="grid h-16">
+                <p class="">Height: {{ poke.height }}</p>
+                <p class="">Weight: {{ poke.weight }}</p>
+            </div>
+            <div class="grid h-16">
+                <p class="">Category: {{ poke.category }}</p>
+                <p class="">Abilities: {{ poke.abilities }}</p>
+            </div>
+            <div class="grid grid-cols-2 justify-between">
+                <form onsubmit="return confirm('Are you sure you want to delete this Pokémon?');" method="post" action="/delete/{{ poke.id }}" class="mt-4">
+                    <button type="submit" class="p-2 bg-red-500 rounded-md">Delete Pokemon</button>
+                </form>
+                <form method="get" action="/update/{{ poke.id }}" class="mt-4">
+                    <button type="submit" class="p-2 bg-green-500 text-white rounded-md">Update Pokemon</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
     <script>
-        function updateProfile() {
-            // get the form and submit it
-    
-            const form = document.querySelector('form');
-            form.submit();
+        function showUploadForm() {// Show the image upload form and hide the edit button
+            document.getElementById('uploadFormContainer').style.display = 'block';
+            document.getElementById('editButton').style.display = 'none';
+            // Show the update button
         }
-        const updateBtn = document.getElementById('updateButton');
-    
-        const inputFile = document.getElementById('edit-avatar');
-    
-        inputFile.addEventListener('change', () => {
-            updateBtn.disabled = false;
-            // remove class bg-slate-500/40 and add bg-blue-500
-            updateBtn.classList.remove('bg-blue-500/40');
-            updateBtn.classList.add('bg-blue-500');
-    
-            // change the image in the img tag
-            const file = inputFile.files[0];
-    
-            // file reader -> read the file
-            const reader = new FileReader();
-    
-            reader.onload = (e) => {
-                const img = document.querySelector('img');
-                img.src = e.target.result;
-            }
-    
-            reader.readAsDataURL(file);
-    
-        });
-    
     </script>
-</body>    
-
-  
+</body>
+</html>

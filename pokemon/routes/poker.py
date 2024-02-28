@@ -23,20 +23,17 @@ def new():
         if current_user.is_authenticated:
             user_id = current_user.id
 
-            # Fetch image from URL
             image_response = requests.get(image_url)
             if image_response.status_code == 200:
                 image_data = BytesIO(image_response.content)
                 image = Image.open(image_data)
                 image_filename = f"{name.replace(' ', '_')}.png"
-                image_path = f"pokemon/static/images/{image_filename}"  # Fixed image path
+                image_path = f"pokemon/static/images/{image_filename}" 
 
                 image.save(image_path)
             else:
-                # Handle image retrieval error
                 image_path = None
 
-            # Insert Pokémon data with user ID
             insert_pokemon_data(name, image_url, description, height, weight, category, abilities, image_path, user_id)
 
             return redirect("/main")
@@ -46,14 +43,10 @@ def new():
  
 @poker_bp.route("/update/<int:pokemon_id>", methods=["GET", "POST"])
 def update(pokemon_id):
-    # Retrieve the existing Pokémon entry
+    
     existing_data = fetch_pokemon_by_id(pokemon_id)
-
-    # Check if the Pokémon belongs to the current user
     if existing_data.user_id != current_user.id:
-        abort(403)  # Return a forbidden error if the Pokémon doesn't belong to the current user
-
-    # Proceed with the update operation
+        abort(403)  
     form = MyForm()
     if request.method == "POST" and form.validate_on_submit():
         update_pokemon_data(pokemon_id, form)
@@ -69,16 +62,12 @@ def update(pokemon_id):
 
     return render_template("update.html", form=form, existing_data=existing_data)
 
-# For delete operation
+
 @poker_bp.route("/delete/<int:pokemon_id>", methods=["POST"])
 def delete(pokemon_id):
-    # Retrieve the existing Pokémon entry
+    
     existing_data = fetch_pokemon_by_id(pokemon_id)
-
-    # Check if the Pokémon belongs to the current user
     if existing_data.user_id != current_user.id:
-        abort(403)  # Return a forbidden error if the Pokémon doesn't belong to the current user
-
-    # Proceed with the delete operation
+        abort(403)  
     delete_pokemon_data(pokemon_id)
     return redirect("/main")

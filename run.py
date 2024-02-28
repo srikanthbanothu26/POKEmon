@@ -1,4 +1,4 @@
-from pokemon import create_app
+from pokemon.app import create_app
 
 app = create_app()
 
