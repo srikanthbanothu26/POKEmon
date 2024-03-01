@@ -55,7 +55,6 @@ def update_pokemon_data(pokemon_id, form):
 def fetch_user_pokemon(user_id):
     return Pokemon.query.filter_by(user_id=user_id).all()
 
-
 def like_or_unlike_pokemon(user_id, pokemon_id):
     like = LIKE_S.query.filter_by(user_id=user_id, pokemon_id=pokemon_id).first()
     
@@ -67,7 +66,7 @@ def like_or_unlike_pokemon(user_id, pokemon_id):
     
     db.session.commit()
     
-    update_like_count(pokemon_id)  # Update the like count after liking/unliking
+    update_like_count(pokemon_id) # Update the like count after liking/unliking
 
 def update_like_count(pokemon_id):
     like_count = LIKE_S.query.filter_by(pokemon_id=pokemon_id, liked=True).count()

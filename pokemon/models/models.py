@@ -12,7 +12,8 @@ class Pokemon(db.Model):
     category = db.Column(db.String(100), nullable=False)
     abilities = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    like_count = db.Column(db.Integer, default=0)  # New column to store the number of likes
+    image_path = db.Column(db.String(255), nullable=False) 
+    like_c = db.relationship("LIKE_S", backref="pokemon", lazy=True)
 
 
 class USER1(UserMixin, db.Model):
@@ -23,7 +24,6 @@ class USER1(UserMixin, db.Model):
     password = db.Column(db.String(200), nullable=False, unique=True)
     profile_image = db.Column(db.String(255), nullable=False, default="default.png")
     pokemons = db.relationship("Pokemon", backref="user", lazy=True)
-    likes = db.relationship("LIKE_S", backref="user", lazy=True)
 
     def check_pwd_hash(self, password):
         return check_password_hash(self.password, password)
@@ -40,4 +40,3 @@ class LIKE_S(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     pokemon_id = db.Column(db.Integer, db.ForeignKey('pokemon.id'), nullable=False)
-    liked = db.Column(db.Boolean, default=False)

@@ -3,28 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pokemon</title>
+    <title>Pokemon</title>
     <link rel="icon" href="static\img\Screenshot 2024-02-27 at 11-01-46 Colors LOGO.com1.ico">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="static\css\index.css">
 </head>
-<body class="text-white bg-black">
-    <div class="h-24 bg-blue-800 flex flex-row place-items-center justify-between">
+<body class="text-white bg-black m-0 p-0">
+    <div class="h-28 bg-blue-800 flex flex-row place-items-center justify-between">
         <div class="ml-16 text-2xl font-serif italic h-20 flex border-2 w-20 rounded-full gap-4">
             <img src="static\img\Screenshot 2024-02-27 at 11-01-46 Colors LOGO.com1.png" class="h-20 w-20 rounded-full">
-            <button class="rounded-full">pokemon</button>
+            <button class="rounded-full">Pokemon</button>
         </div>
         <div class="flex flex-row">
             <form method="post" action="/register" class="Register mr-8">
-                <input type="submit" value="create account" class="justify-right cursor-pointer pr-8">
+                <input type="submit" value="Create Account" class="justify-right cursor-pointer pr-8">
             </form>
             <form method="post" action="/login" class="login mr-4">
-                <input type="submit" value="login" class="cursor-pointer">
+                <input type="submit" value="Login" class="cursor-pointer">
             </form>
         </div>
     </div>
-    <div class="bg-cover bg-center flex flex-col h-screen items-center justify-center w-full" style="background-image: url('https://media.assettype.com/outlooktraveller%2Fimport%2Foutlooktraveller%2Fpublic%2Fuploads%2Farticles%2Fexplore%2Fshutterstock_2006764235.jpg?w=1200&auto=format%2Ccompress&fit=max')">
-        <h1 class="text-4xl text-center w-full">Welcome to the World of Pokémon!</h1>
-        <h2 class="text-2xl text-right w-full">Discover the Magic, Adventure, and Friendship Await!</h2>
-    </div>    
+
+    <div class="relative w-full m-0 p-0">
+        <div class="image-container flex flex-row h-screen w-full object-cover">
+            <!-- Replace the image URL with your actual image URL -->
+            <img class="image w-full object-cover" src="https://getwallpapers.com/wallpaper/full/f/4/6/524207.jpg" alt="Image 1">
+            <img class="image hidden object-cover w-full" src="https://getwallpapers.com/wallpaper/full/b/4/f/525188.jpg" alt="Image 2">
+            <img class="image hidden object-cover w-full" src="https://getwallpapers.com/wallpaper/full/c/4/7/525488.jpg" alt="Image 3">
+            <img class="image hidden w-full object-cover" src="https://getwallpapers.com/wallpaper/full/0/d/8/524704.jpg" alt="Image 4">
+            <img class="image hidden w-full object-cover" src="https://getwallpapers.com/wallpaper/full/8/5/b/525465.jpg" alt="Image 5">
+            <!-- Buttons corresponding to each image -->
+            <div class="button-container absolute bottom-0 flex justify-center mb-36 w-full">
+                <div class="button mx-1" onclick="showImage(1)"></div>
+                <div class="button mx-1" onclick="showImage(2)"></div>
+                <div class="button mx-1" onclick="showImage(3)"></div>
+                <div class="button mx-1" onclick="showImage(4)"></div>
+                <div class="button mx-1" onclick="showImage(5)"></div>
+            </div>
+        </div>
+        <div class="absolute top-0 left-0 right-0 mt-36 flex flex-col justify-center items-center">
+            <ul class="text-white flex flex-row justify-center border-b-2">
+                <p class="text-white mr-6">Number of Users:: {{ num_users }}</p>
+                {% for name, profile_image_url in user_data %}
+                    <li class="flex items-center mb-2 justify-center">
+                        <span class="bg-green-600 pl-2 pr-2 rounded-lg">{{ name }}</span>
+                        <img src="{{ profile_image_url }}" alt="profile" class="w-8 h-8 rounded-full border-2 border-slate-900 hover:border-sky-400 transition duration-300 cursor-pointer object-cover ml-1 mr-4">
+                    </li>
+                {% endfor %}
+            </ul>  
+            <h1 class="text-4xl mr-24">Welcome to the World of <b class="text-6xl">Pokémon!</b></h1>
+            <h2 class="text-2xl mt-4">Discover the Magic, Adventure, and Friendship Await!</h2>
+            <a href="/register" class="text-white text-lg mt-4 inline-block bg-blue-500 px-6 py-2 rounded-full">GET STARTED</a>
+        </div>
+    </div>
+    <!--<p class="text-white text-center">Users</p>
+        <p class="text-white">Number of Users:: {{ num_users }}</p>
+        <ul class="text-white flex flex-row justify-center">
+        {% for name, profile_image_url in user_data %}
+            <li class="flex items-center mb-2 justify-center">
+                <span class="bg-green-600 pl-2 pr-2 rounded-lg">{{ name }}</span>
+                <img src="{{ profile_image_url }}" alt="profile" class="w-8 h-8 rounded-full border-2 border-slate-900 hover:border-sky-400 transition duration-300 cursor-pointer object-cover ml-1 mr-4">
+            </li>
+        {% endfor %}
+    </ul>    -->
+    <script>
+        // JavaScript function to display the selected image
+        function showImage(imageNumber) {
+            const images = document.querySelectorAll('.image');
+            images.forEach((image, index) => {
+                image.classList.add('hidden');
+            });
+            images[imageNumber - 1].classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>

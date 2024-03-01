@@ -1,5 +1,6 @@
 from flask import Flask, send_from_directory
 import os
+#event.target.classList.toggle("text-red-500",data.liked)
 from pokemon.extensions.db import db
 from pokemon.extensions.migrate import migration
 from pokemon.extensions.login_manager import login_manager

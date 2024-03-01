@@ -9,36 +9,46 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 </head>
 <body class="text-black">
-    <!--profile section-->
+    <!-- Profile Image Upload Form -->
+    <div id="uploadFormContainer">
+        <form id="uploadForm" method="post" action="/upload_profile_image" enctype="multipart/form-data">
+            <input type="file" name="profile_image" accept="image/jpeg, image/png">
+            <button class="bg-green-600 rounded-md" type="submit">Upload Profile Image</button>
+        </form>            
+    </div>
+
+    <!-- Profile Section -->
     <div class="grid grid-cols-1">
         {% if current_user.profile_image %}
         <div class="bg-blue-600 w-full flex flex-row">
-            <h1>{{current_user.email}}</p>
-            {% set image_path = url_for('uploaded_file', filename=current_user.profile_image) %}
-            <div class="flex relative items-end h-20">
-                <img id="profileImage" src="{{ image_path }}" alt="Profile Image" class="h-20 rounded-full w-20 fixed object-center">
-                <button id="editButton" class="flex rounded-full absolute bg-gray-400 ml-4 mb-1" onclick="showUploadForm()">upload</button>
+            <h1>{{ current_user.email }}</h1>
+            <div class="flex relative items-end h-20" id="profileImageContainer">
+                <img src="{{ url_for('uploaded_file', filename=current_user.profile_image) }}" alt="Profile Image" class="h-20 rounded-full w-20 fixed object-center">
+                <button id="editButton" class="flex rounded-full absolute bg-gray-400 ml-4 mb-1" onclick="showUploadForm()">Upload</button>
             </div>
         </div>
         {% endif %}
-        <div id="uploadFormContainer" style="display: none;">
-            <form id="uploadForm" method="post" action="/upload_profile_image" enctype="multipart/form-data">
-                <input type="file" name="profile_image" accept="image/jpeg, image/png">
-                <button class="bg-green-600 rounded-md "type="submit">Upload</button>
-            </form>            
-        </div>
     </div>
+
+    <!-- Hidden input to store current profile image filename -->
+    <input type="hidden" id="currentProfileImage" value="{{ current_user.profile_image }}">
+
+    <!-- Navigation Link -->
     <a href="/main">BACK</a>
-    <!--pokemon section-->
+
+    <!-- Pokémon Container -->
     <div class="pokemoncontainer grid grid-cols-4 mt-4 justify-center text-black">
         {% for poke in user_pokemons %}
         <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center">
+            <!-- Profile Image (if available) -->
             {% if current_user.profile_image %}
-            {% set image_path = url_for('uploaded_file', filename=current_user.profile_image) %}
             <div class="flex justify-end mb-2">
-                <img id="profileImage" src="{{ image_path }}" alt="Profile Image" class="h-10 w-10 rounded-full">
+                <img id="profileImage" src="{{ url_for('uploaded_file', filename=current_user.profile_image) }}" alt="Profile Image" class="h-10 w-10 rounded-full">
             </div>
+            <h1>{{ current_user.name }}</h1>
+            <h2>{{ current_user.email }}</h2>
             {% endif %}
+            <!-- Pokemon Details -->
             <h2 class="heading bg-pink-600 text-xl">{{ poke.name }}</h2>
             <p class="id hover:text-blue-800">ID: {{ poke.id }}</p>
             <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md mb-4 h-52">
@@ -53,6 +63,7 @@
                 <p class="">Category: {{ poke.category }}</p>
                 <p class="">Abilities: {{ poke.abilities }}</p>
             </div>
+            <!-- Delete and Update Buttons -->
             <div class="grid grid-cols-2 justify-between">
                 <form onsubmit="return confirm('Are you sure you want to delete this Pokémon?');" method="post" action="/delete/{{ poke.id }}" class="mt-4">
                     <button type="submit" class="p-2 bg-red-500 rounded-md">Delete Pokemon</button>
@@ -64,12 +75,50 @@
         </div>
         {% endfor %}
     </div>
+
+    <!-- JavaScript Function to Show Upload Form -->
     <script>
-        function showUploadForm() {// Show the image upload form and hide the edit button
+        function showUploadForm() {
             document.getElementById('uploadFormContainer').style.display = 'block';
             document.getElementById('editButton').style.display = 'none';
-            // Show the update button
         }
+    </script>
+
+    <!-- JavaScript for Updating Profile -->
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+
+            const formData = new FormData(this);
+
+            fetch('/upload_profile_image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    // Update the profile image src attribute
+                    const profileImage = document.getElementById('profileImage');
+                    profileImage.src = "{{ url_for('uploaded_file', filename='') }}" + data.filename;
+
+                    // Hide the upload form
+                    document.getElementById('uploadFormContainer').style.display = 'none';
+                    document.getElementById('editButton').style.display = 'block';
+
+                    // Display the success message
+                    const successMessage = document.createElement('p');
+                    successMessage.textContent = data.message;
+                    successMessage.classList.add('text-red-800', 'ml-24','text-xl');
+                    document.getElementById('profileImageContainer').appendChild(successMessage);
+                } else {
+                    alert(data.error || 'An error occurred while uploading the profile image.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
     </script>
 </body>
 </html>

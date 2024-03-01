@@ -3,71 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="static/css/main.css">
-    <link rel="stylesheet" href="static/css/profile.css">
 </head>
 <body class="font-mono bg-black">
-    <!--headers-->
     <div class="flex cursor-pointer bg-gray-500 text-white w-full h-auto items-center">
         <div class="w-full">
             <h1 class="text-3xl p-4 text-center">Welcome</h1>
         </div>
         <div class="flex mr-4 items-center">
-            <a href="/profile_user" class="flex border-2 rounded-lg items-center h-8  p-2">profile</a>
+            <a href="/profile_user" class="flex border-2 rounded-lg items-center h-8 p-2">Profile</a>
         </div>
     </div>
-    <!-- Search form -->
+
     <form method="POST" action="/main" class="flex gap-4 flex-wrap justify-end items-center mt-5">
         <input type="text" name="search_term" placeholder="Search by name or ID" class="p-2 border border-gray-300 rounded-md w-1/2">
         <button type="submit" class="p-2 bg-blue-500 text-black rounded-md mr-2">Search</button>
     </form>
-    <!-- Form to add a new Pokemon -->
+
     <form method="post" action="/new" class="flex justify-start mt-4">
-        <button type="submit" class="p-2 ml-5 text-white rounded-md bg-red-600 hover:bg-green-500 cursor-pointer">Tap to add a Pokemon</button>
+        <button type="submit" class="p-2 ml-5 text-white rounded-md bg-red-600 hover:bg-green-500 cursor-pointer">Tap to add a Pokémon</button>
     </form>
-    <!-- Pokemon container -->
+
     <div class="pokemoncontainer grid grid-cols-4 mt-4 justify-center">
         {% for poke in details %}
-        <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center">
-            <div class="grid grid-cols-2 mb-4">
-                <button class="like-button {% if poke.liked %}liked{% endif %}" type="button" data-pokemon-id="{{ poke.id }}">
-                    {% if poke.liked %}
-                        ❤️ <!-- Red heart if liked -->
-                    {% else %}
-                        🤍 <!-- White heart if not liked -->
-                    {% endif %}
-                </button>                                                                  
-                <!-- Like count -->
-                <p class="text-white">Like count: <span id="like-count-{{ poke.id }}" class="text-white">{{ poke.like_count }}</span></p>
-            </div>  
-            <!-- Profile image or username -->
-            {% if poke.user_id == current_user.id %}
-                {% if current_user.profile_image %}
-                <div class="flex justify-end items-center">
-                    <img id="profileImage" src="{{ url_for('uploaded_file', filename=current_user.profile_image) }}" alt="Profile Image" class="h-10 w-10 rounded-full mb-2">
-                    <p class="text-white">{{ current_user.name }}</p>
-                </div>
-                {% endif %}
-            {% else %}
-                <div class="other-user-profile-image" data-user-id="{{ poke.user_id }}"></div>
-            {% endif %}
-            <!-- Pokemon details -->
-            <h2 class="heading bg-pink-600 text-xl">{{ poke.name }}</h2>
-            <p class="id hover:text-blue-800">ID: {{ poke.id }}</p>
+        <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center relative">
+            <div class="absolute top-2 right-2 flex items-center pt-3 pr-4">
+                {{poke.liked}}
+                <h3 class="text-white">{{ poke.like_c|length }}</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer mr-1 like-btn {% if poke.liked %}fill-red-500{% endif %}" onclick="likePokemon(this)" data-poke-id="{{ poke.id }}">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                </svg>
+            </div>
+            <div class="flex items-center gap-x-2 bg-slate-500 rounded-full pr-2  text-white">
+                <!-- User Avatar -->
+                <img src="{{url_for('uploaded_file', filename=poke.user.profile_image) }}" alt="user" class="w-8 h-8 rounded-full border-2 border-slate-900 hover:border-sky-400 transition duration-300 cursor-pointer object-cover">
+                <p class="text-sm">{{ poke.user.name }}</p>
+            </div>
+            <h2 class="text-xl text-white">{{ poke.name }}</h2>
+            <p class="text-white">ID: {{ poke.id }}</p>
             <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md mb-4 h-52">
-            <div class="h-36 mb-4 text-white">
-                <p class="description inline">Description: {{ poke.description }}</p>
+            <div class="text-white mb-4">
+                <p>Description: {{ poke.description }}</p>
             </div>
-            <div class="grid h-16 text-white">
-                <p class="">Height: {{ poke.height }}</p>
-                <p class="">Weight: {{ poke.weight }}</p>
+            <div class="grid grid-cols-2 text-white mb-4">
+                <p>Height: {{ poke.height }}</p>
+                <p>Weight: {{ poke.weight }}</p>
             </div>
-            <div class="grid h-16 text-white">
-                <p class="">Category: {{ poke.category }}</p>
-                <p class="">Abilities: {{ poke.abilities }}</p>
+            <div class="grid grid-cols-2 text-white mb-4">
+                <p>Category: {{ poke.category }}</p>
+                <p>Abilities: {{ poke.abilities }}</p>
             </div>
-            <!-- Delete and Update buttons -->
             <div class="grid grid-cols-2 justify-between">
                 <form onsubmit="return confirm('Are you sure you want to delete this Pokémon?');" method="post" action="/delete/{{ poke.id }}" class="mt-4">
                     <button type="submit" class="p-2 bg-red-500 text-white rounded-md">Delete Pokemon</button>
@@ -79,58 +66,22 @@
         </div>
         {% endfor %}
     </div> 
-</body> 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const likeButtons = document.querySelectorAll('.like-button');
-        likeButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                event.preventDefault(); // Prevent the default behavior of the button
-
-                const pokemonId = button.dataset.pokemonId;
-                console.log('Clicked like button for Pokemon ID:', pokemonId); // Add this line
-
-                fetch(`/like/${pokemonId}`, { method: 'POST' })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Response from server:', data); // Add this line
-
-                        // Change the button text based on liking/unliking
-                        if (data.liked) {
-                            button.innerHTML = '❤️'; // Change to red heart if liked
-                        } else {
-                            button.innerHTML = '🤍'; // Change to white heart if unliked
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error liking Pokémon:', error);
-                    });
-            });
-        });
-    });
-</script>
-<script>
-    // Add console.log() statements similarly for the other event listener
-    document.addEventListener('DOMContentLoaded', function () {
-        const otherUserProfiles = document.querySelectorAll('.other-user-profile-image');
-        otherUserProfiles.forEach(profile => {
-            const userId = profile.dataset.userId;
-            console.log('Fetching profile image for user ID:', userId); // Add this line
             
-            fetch(`/get_profile_image/${userId}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Response from server for profile image:', data); // Add this line
-                    
-                    if (data.profile_image) {
-                        const img = document.createElement('img');
-                        img.src = data.profile_image;
-                        img.alt = 'Profile Image';
-                        img.classList.add('h-10', 'w-10', 'rounded-full', 'mb-2');
-                        profile.appendChild(img);
+        <script>
+            function likePokemon(svgTag) {
+                console.log(svgTag);
+                svgTag.classList.toggle('fill-red-500');
+            
+                const data = svgTag.getAttribute('data-poke-id');
+                const url = "/like?id=" + data;
+                fetch(url).then((resp) => {
+                    if (resp.status !== 200) {
+                        console.log("Error liking pokemon");
+                        svgTag.classList.toggle('fill-red-500');
                     }
                 });
-        });
-    });
-</scrip>
+            }
+            </script>
+            
+</body>
 </html>

@@ -4,4 +4,13 @@
 .pokemon:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}/* Optional: Style for the heart icon */
+.heart {
+    color: white; /* Initial color */
 }
+
+.heart.liked {
+    color: red; /* Color when liked */
+}
+
+
