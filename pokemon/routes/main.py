@@ -15,7 +15,6 @@ def index():
     user_data = zip(user_names, user_profile_image_urls)
     return render_template("index.html", num_users=num_users, user_data=user_data)
 
-
 @main_bp.route("/main", methods=["GET", "POST"])
 def main():
     user_details1 = None
@@ -28,7 +27,7 @@ def main():
         details = fetch_pokemon_details()
         
     # Check if the current user has liked each Pokémon and provide this information to the template
-    pokemons = Pokemon.query.limit(LIMIT).all()
+    pokemons = Pokemon.query.all()
 
     for pokemon in pokemons:
         # check if the current user has liked the pokemon or not
@@ -38,7 +37,7 @@ def main():
         else:
             pokemon.liked = False
 
-    return render_template("main.html", details=details, user_details1=user_details1)
+    return render_template("main.html", details=details, user_details1=user_details1, pokemons=pokemons)
 
 # http://localhost:5000/like?id=3
 @main_bp.route("/like")

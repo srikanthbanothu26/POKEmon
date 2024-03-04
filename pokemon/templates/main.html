@@ -65,23 +65,21 @@
             </div>
         </div>
         {% endfor %}
-    </div> 
-            
-        <script>
-            function likePokemon(svgTag) {
-                console.log(svgTag);
-                svgTag.classList.toggle('fill-red-500');
-            
-                const data = svgTag.getAttribute('data-poke-id');
-                const url = "/like?id=" + data;
-                fetch(url).then((resp) => {
-                    if (resp.status !== 200) {
-                        console.log("Error liking pokemon");
-                        svgTag.classList.toggle('fill-red-500');
-                    }
-                });
-            }
-            </script>
-            
+    </div>
+    <script>
+        function likePokemon(svgTag) {
+            console.log(svgTag);
+            svgTag.classList.toggle('fill-red-500');
+        
+            const data = svgTag.getAttribute('data-poke-id');
+            const url = "/like?id=" + data;
+            fetch(url).then((resp) => {
+                if (resp.status !== 200) {
+                    console.log("Error liking pokemon");
+                    svgTag.classList.toggle('fill-red-500');
+                }
+            });
+        }
+    </script>        
 </body>
 </html>

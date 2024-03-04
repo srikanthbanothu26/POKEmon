@@ -9,7 +9,7 @@ from pokemon.routes import main, auth, poker, user
 
 def load_config(app):
     app.config["SECRET_KEY"] = "secret"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://avnadmin:AVNS_mEQfCEIkupo_GdLjlhc@mysql-323302ad-banothusrikanth267-d588.a.aivencloud.com:26621/defaultdb"
+    app.config["SQLALCHEMY_DATABASE_URI"] = " your aiven mysql server link"
     app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads') 
 
 def create_upload_folder(server):
