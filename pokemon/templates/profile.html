@@ -43,7 +43,7 @@
             <!-- Profile Image (if available) -->
             {% if current_user.profile_image %}
             <div class="flex justify-end mb-2">
-                <img id="profileImage" src="{{ url_for('uploaded_file', filename=current_user.profile_image) }}" alt="Profile Image" class="h-10 w-10 rounded-full">
+                <img id="profileImage" class="h-10 w-10 runded-full" src="{{ url_for('uploaded_file', filename=current_user.profile_image) }}" alt="{{ current_user.username }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('pokemon', filename='static/profile_pics/profile.png') }}';" />
             </div>
             <h1>{{ current_user.name }}</h1>
             <h2>{{ current_user.email }}</h2>
