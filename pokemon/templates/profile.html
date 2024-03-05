@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,132 +9,188 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 </head>
-<body class="text-black">
+
+<body class="text-gray-900 bg-gray-100 cursor-pointer">
+    <div class="bg-gray-800 text-white">
+        <div class="container mx-auto py-4">
+            <p class="text-center text-3xl">Pokemon</p>
+            <div class="flex justify-end">
+                <button id="account-btn" class="flex items-center text-2xl border-2 rounded-lg px-4 py-1"> &#9787;Account</button>
+            </div>
+        </div>
+    </div>
     <!-- Profile Section -->
-    <div class="flex flex-row">
-        <div class="flex justify-end right-0 fixed">
-            <div class="bg-red-700 h-96 w-56 grid grid-cols-1 justify-center items-center rounded-md">
-                <div class="pl-8 pr-8">
-                    <div class="profile-image-container ml-16">
+    <div class="container mx-auto mt-4">
+        <div class="flex justify-end">
+            <div class="bg-white shadow-md rounded-lg w-1/3 p-4 hidden" id="profile-section">
+                <div class="text-center">
+                    <div class="mb-4">
                         {% if current_user.profile_image %}
-                        <img id="profile-image" src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-24 w-24 rounded-full" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
+                        <img id="profile-image" src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-24 w-24 rounded-full mx-auto" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
                         {% else %}
-                        <img id="profile-image" src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-16 w-16 rounded-full" alt="Default Profile Image">
+                        <img id="profile-image" src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-16 w-16 rounded-full mx-auto" alt="Default Profile Image">
                         {% endif %}
                     </div>
-                    <button id="edit-profile-btn" class="ml-20 border-2 flex inline text-white rounded h-8 w-16">Update</button>
-                    <input type="file" id="file-upload" accept="image/*" style="display: none;">
-                    <button id="upload-btn" style="display: none;" class="bg-green-600">Upload</button>
-                    <p class="mt-8">name:{{current_user.name}}<p>
-                    <p>id:{{current_user.id}}</p>
-                    <p class="pr-10">email:{{current_user.email}}</p>
-                    <a href="/main" class="border border-white py-1 px-3 rounded-lg mt-8">LOGOUT</a>
+                    <button id="edit-profile-btn" class="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2 mb-4">Update</button>
+                    <input type="file" id="file-upload" accept="image/*" class="hidden">
+                    <button id="upload-btn" class="bg-green-500 hover:bg-green-600 text-white rounded-lg px-4 py-2 mb-4 hidden">Upload</button>
+                    <p class="text-lg">Name: {{current_user.name}}</p>
+                    <p class="text-lg">ID: {{current_user.id}}</p>
+                    <p class="text-lg">Email: {{current_user.email}}</p>
+                    <p class="text-lg">Added: {{ current_user.pokemons|length }}</p>
+                    <p class="text-lg pb-4">Total Likes: {{total_likes}}</p>
+                    <a href="/main" class="block bg-gray-700 hover:bg-gray-800 text-white text-center py-2 px-4 rounded-lg">BACK</a>
                 </div>
             </div>
         </div>
         <!-- Pokémon Container -->
-        <div class="pokemoncontainer grid grid-cols-4 mt-4 justify-center items-center text-black">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             {% if user_pokemons %}
-                {% for poke in user_pokemons %}
-                    <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center">
-                        <!-- Profile Image (if available) -->
-                        <div class="flex flex-row items-center justify-between bg-green-600 rounded-lg">
-                            <div class="profile-image-container ml-4">
-                                {% if current_user.profile_image %}
-                                    <img id="profile-image" src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-16 w-16 rounded-full" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
-                                {% else %}
-                                    <img id="profile-image" src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-16 w-16 rounded-full" alt="Default Profile Image">
-                                {% endif %}
-                            </div>
-                            <p class="pr-6">{{current_user.name}}</p>
-                        </div>
-                        <!-- Pokemon Details -->
-                        <h2 class="heading bg-pink-600 text-xl">{{ poke.name }}</h2>
-                        <p class="id hover:text-blue-800">ID: {{ poke.id }}</p>
-                        <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md mb-4 h-52">
-                        <div class="h-36 mb-4">
-                            <p class="description inline">Description: {{ poke.description }}</p>
-                        </div>
-                        <div class="grid h-16">
-                            <p class="">Height: {{ poke.height }}</p>
-                            <p class="">Weight: {{ poke.weight }}</p>
-                        </div>
-                        <div class="grid h-16">
-                            <p class="">Category: {{ poke.category }}</p>
-                            <p class="">Abilities: {{ poke.abilities }}</p>
-                        </div>
-                        <!-- Delete and Update Buttons -->
-                        <div class="grid grid-cols-2 justify-between">
-                            <form onsubmit="return confirm('Are you sure you want to delete this Pokémon?');" method="post" action="/delete/{{ poke.id }}" class="mt-4">
-                                <button type="submit" class="p-2 bg-red-500 rounded-md">Delete Pokemon</button>
-                            </form>
-                            <form method="get" action="/update/{{ poke.id }}" class="mt-4">
-                                <button type="submit" class="p-2 bg-green-500 text-white rounded-md">Update Pokemon</button>
-                            </form>
-                        </div>
+            {% for poke in user_pokemons %}
+            <div class="pokemon border border-gray-300 rounded-lg p-4">
+                <!-- Profile Image (if available) -->
+                <div class="flex items-center justify-between bg-gray-200 rounded-lg px-2 py-1 mb-2">
+                    <div class="profile-image-container">
+                        {% if current_user.profile_image %}
+                        <img src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-12 w-12 rounded-full" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
+                        {% else %}
+                        <img src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-12 w-12 rounded-full" alt="Default Profile Image">
+                        {% endif %}
                     </div>
-                {% endfor %}
+                    <div class="text-sm text-gray-700">
+                        <p>{{current_user.name}}</p>
+                        <p class="text-xs">Likes: {{ poke.like_c|length }}</p>
+                    </div>
+                </div>
+                <!-- Pokemon Details -->
+                <h2 class="text-lg font-bold text-gray-900 mb-2">{{ poke.name }}</h2>
+                <p class="text-sm text-gray-700">ID: {{ poke.id }}</p>
+                <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md mb-2">
+                <div class="h-24 overflow-y-auto border-b border-gray-300 mb-2">
+                    <p class="text-sm text-gray-700">Description: <span class="text-blue-700">{{ poke.description }}</span></p>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <p class="text-sm text-gray-700">Height: {{ poke.height }}</p>
+                    <p class="text-sm text-gray-700">Weight: {{ poke.weight }}</p>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <div class="text-sm text-gray-700">
+                        <p>Category:</p>
+                        <p class="text-green-700">{{ poke.category }}</p>
+                    </div>
+                    <div class="text-sm text-gray-700">
+                        <p>Abilities:</p>
+                        <p class="text-red-700">{{ poke.abilities }}</p>
+                    </div>
+                </div>
+                <!-- Delete and Update Buttons -->
+                <div class="flex justify-between">
+                    <form onsubmit="return confirm('Are you sure you want to delete this Pokémon?');" method="post" action="/delete/{{ poke.id }}">
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2">Delete Pokemon</button>
+                    </form>
+                    <form method="get" action="/update/{{ poke.id }}">
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white rounded-lg px-4 py-2">Update Pokemon</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
             {% else %}
-                <div>No Pokémon data available.</div>
+            <div>No Pokémon data available.</div>
             {% endif %}
         </div>
-    <div>   
+    </div>
+    <div class="container mx-auto text-center mt-4">
+        <button id="loadMoreBtn" class="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2">Load More</button>
+    </div>
     <script>
-        document.getElementById('upload-btn').addEventListener('click', function() {
+        document.getElementById('upload-btn').addEventListener('click', function () {
             var fileInput = document.getElementById('file-upload');
             var file = fileInput.files[0];
             if (file) {
                 var formData = new FormData();
                 formData.append('profile_image', file);
-                
+
                 fetch('/upload_profile_image', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw new Error('Network response was not ok.');
-                })
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('profile-image').src = data.profile_image_url;
-                        alert('Profile image uploaded successfully.');
-                    } else {
-                        alert('Failed to upload profile image.');
-                    }
-                })
-                .catch(error => {
-                    console.error('There was an error with the fetch operation:', error);
-                });
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('Network response was not ok.');
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('profile-image').src = data.profile_image_url;
+                            alert('Profile image uploaded successfully.');
+                        } else {
+                            alert('Failed to upload profile image.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('There was an error with the fetch operation:', error);
+                    });
             } else {
                 alert('No file selected.');
             }
         });
-        </script>
-        <script>
-            function scrollToSection(sectionId) {
-                var section = document.getElementById(sectionId);
-                if (section) {
-                    section.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const editBtn = document.getElementById('edit-profile-btn');
-                const fileUpload = document.getElementById('file-upload');
-                const uploadBtn = document.getElementById('upload-btn');
-        
-                editBtn.addEventListener('click', function() {
-                    fileUpload.style.display = 'block';
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const editBtn = document.getElementById('edit-profile-btn');
+            const fileUpload = document.getElementById('file-upload');
+            const uploadBtn = document.getElementById('upload-btn');
+
+            editBtn.addEventListener('click', function () {
+                fileUpload.click();
+                fileUpload.addEventListener('change', function () {
                     uploadBtn.style.display = 'block';
                 });
             });
-        </script>
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const loadMoreBtn = document.getElementById("loadMoreBtn");
+            const pokemonCards = document.querySelectorAll(".pokemon");
+
+            // Hide all Pokémon cards except the first four
+            for (let i = 3; i < pokemonCards.length; i++) {
+                pokemonCards[i].classList.add("hidden");
+            }
+
+            loadMoreBtn.addEventListener("click", function () {
+                // Show next set of hidden Pokémon cards
+                let nextIndexToShow = 0;
+                for (let i = 0; i < pokemonCards.length; i++) {
+                    if (pokemonCards[i].classList.contains("hidden")) {
+                        pokemonCards[i].classList.remove("hidden");
+                        nextIndexToShow++;
+                    }
+                    if (nextIndexToShow >= 3) break; // Show only four Pokémon cards at a time
+                }
+
+                // Hide Load More button if all Pokémon cards are visible
+                if (document.querySelectorAll(".pokemon.hidden").length === 0) {
+                    loadMoreBtn.style.display = "none";
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const accountBtn = document.getElementById("account-btn");
+            const profileSection = document.getElementById("profile-section");
+
+            accountBtn.addEventListener("click", function () {
+                profileSection.classList.toggle("hidden");
+            });
+        });
+    </script>
 </body>
+
 </html>

@@ -11,6 +11,11 @@
     <div class="form-box text-white">
         <form method="POST" action="/new">
             {{ form.hidden_tag() }}
+            {% if pokemon_exists %}
+            <div class="item flex justify-between text-white">
+                <p class="text-red-800">This Pokémon already exists!</p>
+            </div>
+            {% endif %}
             <div class="item flex justify-between">
                 <label >{{ form.name.label }}</label>
                 <p class="text-black">{{ form.name() }}</p>

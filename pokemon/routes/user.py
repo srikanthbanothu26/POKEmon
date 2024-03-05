@@ -6,7 +6,7 @@ from pokemon.extensions.db import db
 import os
 from pokemon.forms.forms import RegistrationForm
 from flask_login import login_required
-from pokemon.models.models import USER1
+from pokemon.models.models import LIKE_S,Pokemon
 
 user_bp = Blueprint('user', __name__)
 PROFILE_PICS_FOLDER = 'static/profile_pics'
@@ -37,7 +37,8 @@ def profile():
             filename = f"{current_user.id}.png"
             current_user.profile_image = filename
             db.session.commit()
-    return render_template("profile.html", user_pokemons=user_pokemons,profile_image_url=filename)
+    total_likes = LIKE_S.query.join(Pokemon).filter(Pokemon.user_id == current_user.id).count()
+    return render_template("profile.html", user_pokemons=user_pokemons,profile_image_url=filename,total_likes=total_likes)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}

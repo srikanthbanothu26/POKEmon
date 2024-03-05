@@ -4,16 +4,19 @@ from pokemon.oper.oper import search_pokemon, user_details, fetch_pokemon_detail
 from pokemon.models.models import LIKE_S,Pokemon,USER1
 from pokemon.extensions.db import db
 main_bp = Blueprint("main", __name__)
-LIMIT=20
 
 @main_bp.route("/", methods=["GET", "POST"])
 def index():
     users = USER1.query.all()
     num_users = len(users)
-    user_names = [user.name for user in users]
-    user_profile_image_urls = [url_for('uploaded_file', filename=user.profile_image) for user in users]  # Assuming you have a function named 'uploaded_file' for generating profile image URLs
-    user_data = zip(user_names, user_profile_image_urls)
+    user_data = []
+
+    for user in users:
+        profile_image_url = url_for('static', filename=f"profile_pics/{user.profile_image}")
+        user_data.append((user.name, profile_image_url))
+
     return render_template("index.html", num_users=num_users, user_data=user_data)
+
 
 @main_bp.route("/main", methods=["GET", "POST"])
 def main():
@@ -46,6 +49,12 @@ def like_pokemon():
     poke_id = request.args.get("id")
     if not poke_id:
         return "No id found", 400
+
+    # Ensure poke_id is a valid integer
+    try:
+        poke_id = int(poke_id)
+    except ValueError:
+        return "Invalid id", 400
 
     user_id = current_user.id
     # before we like the pokemon we need to check if the user has already liked the pokemon

@@ -7,79 +7,117 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="static/css/main.css">
 </head>
-<body class="font-mono bg-black">
-    <div class="flex cursor-pointer bg-gray-500 text-white w-full h-auto items-center">
-        <div class="w-full">
-            <h1 class="text-3xl p-4 text-center">Welcome</h1>
+<body class="font-mono bg-white">
+    <div class="flex bg-gray-800 text-white w-full h-auto items-center py-4 px-8">
+        <div class="flex-1">
+            <div class="flex items-center">
+                <img src="static\img\Screenshot 2024-02-27 at 11-01-46 Colors LOGO.com1.png" class="h-16 w-16 rounded-full mr-4">
+                <h1 class="text-2xl font-bold">Pokemon</h1>
+            </div>
         </div>
-        <div class="flex mr-4 items-center">
-            <a href="/profile_user" class="flex border-2 rounded-lg items-center h-8 p-2">Profile</a>
+        <div>
+            <a href="/profile_user" class="border-2 rounded-md px-4 py-2 mr-4">Profile</a>
+            <a href="/" class="border-2 bg-red-600 text-white rounded-md px-4 py-2">LOGOUT</a>
         </div>
     </div>
 
-    <form method="POST" action="/main" class="flex gap-4 flex-wrap justify-end items-center mt-5">
-        <input type="text" name="search_term" placeholder="Search by name or ID" class="p-2 border border-gray-300 rounded-md w-1/2">
-        <button type="submit" class="p-2 bg-blue-500 text-black rounded-md mr-2">Search</button>
+    <h1 class="text-4xl text-center py-8">Welcome to the Pokémon universe, where dreams and adventures await!</h1>
+
+    <form method="POST" action="/main" class="flex justify-center mb-8">
+        <input type="text" name="search_term" placeholder="Search by name or ID" class="px-4 py-2 border border-gray-300 rounded-md w-1/2">
+        <button type="submit" class="px-6 py-2 bg-yellow-400 text-black rounded-md ml-2 hover:bg-yellow-500 transition duration-300">Search</button>
     </form>
 
-    <form method="post" action="/new" class="flex justify-start mt-4">
-        <button type="submit" class="p-2 ml-5 text-white rounded-md bg-red-600 hover:bg-green-500 cursor-pointer">Tap to add a Pokémon</button>
+    <form method="post" action="/new" class="flex justify-center mb-8">
+        <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-green-500 transition duration-300">Add a Pokémon</button>
     </form>
 
-    <div class="pokemoncontainer grid grid-cols-4 mt-4 justify-center">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mx-8">
         {% for poke in details %}
-        <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center relative">
-            <div class="absolute top-2 right-2 flex items-center pt-3 pr-4">
+        <div class="pokemon bg-gray-100 rounded-lg p-4 text-center relative">
+            <div class="absolute top-2 right-2 flex items-center">
                 {{poke.liked}}
-                <h3 class="text-white">{{ poke.like_c|length }}</h3>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer mr-1 like-btn {% if poke.liked %}fill-red-500{% endif %}" onclick="likePokemon(this)" data-poke-id="{{ poke.id }}">
+                <h3 class="text-black">{{ poke.like_c|length }}</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer ml-1 like-btn {% if poke.liked %}text-red-500{% endif %}" onclick="likePokemon(this)" data-poke-id="{{ poke.id }}">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                 </svg>
             </div>
-            <div class="flex items-center gap-x-2 bg-slate-500 rounded-full pr-2  text-white">
-                <!-- User Avatar -->
-                <img src="{{url_for('uploaded_file', filename=poke.user.profile_image) }}" alt="user" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" class="w-8 h-8 rounded-full border-2 border-slate-900 hover:border-sky-400 transition duration-300 cursor-pointer object-cover">
-                <p class="text-sm">{{ poke.user.name }}</p>
-            </div>
-            <h2 class="text-xl text-white">{{ poke.name }}</h2>
-            <p class="text-white">ID: {{ poke.id }}</p>
-            <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md mb-4 h-52">
-            <div class="text-white mb-4">
-                <p>Description: {{ poke.description }}</p>
-            </div>
-            <div class="grid grid-cols-2 text-white mb-4">
-                <p>Height: {{ poke.height }}</p>
-                <p>Weight: {{ poke.weight }}</p>
-            </div>
-            <div class="grid grid-cols-2 text-white mb-4">
-                <p>Category: {{ poke.category }}</p>
-                <p>Abilities: {{ poke.abilities }}</p>
-            </div>
-            <div class="grid grid-cols-2 justify-between">
-                <form onsubmit="return confirm('Are you sure you want to delete this Pokémon?');" method="post" action="/delete/{{ poke.id }}" class="mt-4">
-                    <button type="submit" class="p-2 bg-red-500 text-white rounded-md">Delete Pokemon</button>
-                </form>
-                <form method="get" action="/update/{{ poke.id }}" class="mt-4">
-                    <button type="submit" class="p-2 bg-green-500 text-white rounded-md">Update Pokemon</button>
-                </form>
+            <div class="flex flex-col items-center">
+                {% if current_user.id == poke.user.id %}
+                    <img id="profile-image" src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-16 w-16 rounded-full mb-4" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
+                {% else %}
+                    <img src="{{ url_for('static', filename='profile_pics/' + poke.user.profile_image) }}" class="h-16 w-16 rounded-full mb-4" alt="{{ poke.user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
+                {% endif %}
+                <h2 class="text-2xl text-black font-semibold">{{ poke.name }}</h2>
+                <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md my-4 h-40 brightness-50 hover:brightness-75">
+                <div class="mb-4 h-24 text-red-600">
+                    <p class="text-gray-800 overflow-y-auto h-24">{{ poke.description }}</p>
+                </div>
+                <div class="flex justify-between text-black mb-4">
+                    <p>Height: {{ poke.height }}</p>
+                    <p class="pl-4">Weight: {{ poke.weight }}</p>
+                </div>
+                <div class="flex justify-between text-gray-800 mb-4">
+                    <p>Category: {{ poke.category }}</p>
+                    <p>Abilities: {{ poke.abilities }}</p>
+                </div>
+                <div class="flex justify-between">
+                    <form onsubmit="return confirm('Are you sure you want to delete this Pokémon?');" method="post" action="/delete/{{ poke.id }}">
+                        <button type="submit" class="bg-red-500 text-white rounded-md px-4 py-1 pr-6 mr-6">Delete</button>
+                    </form>
+                    <form method="get" action="/update/{{ poke.id }}">
+                        <button type="submit" class="bg-green-500 text-white rounded-md px-4 py-1 pl-6 ml-6">Update</button>
+                    </form>
+                </div>
             </div>
         </div>
         {% endfor %}
     </div>
+
+    <button id="loadMoreBtn" class="p-2 bg-blue-500 text-white rounded-md mt-4 mx-auto block">Load More</button>
+
     <script>
         function likePokemon(svgTag) {
             console.log(svgTag);
-            svgTag.classList.toggle('fill-red-500');
+            svgTag.classList.toggle('text-red-500');
         
             const data = svgTag.getAttribute('data-poke-id');
             const url = "/like?id=" + data;
             fetch(url).then((resp) => {
                 if (resp.status !== 200) {
                     console.log("Error liking pokemon");
-                    svgTag.classList.toggle('fill-red-500');
+                    svgTag.classList.toggle('text-red-500');
                 }
             });
         }
-    </script>        
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const loadMoreBtn = document.getElementById("loadMoreBtn");
+            const pokemonCards = document.querySelectorAll(".pokemon");
+
+            // Hide all Pokémon cards except the first four
+            for (let i = 4; i < pokemonCards.length; i++) {
+                pokemonCards[i].classList.add("hidden");
+            }
+
+            loadMoreBtn.addEventListener("click", function() {
+                // Show next set of hidden Pokémon cards
+                let nextIndexToShow = 0;
+                for (let i = 0; i < pokemonCards.length; i++) {
+                    if (pokemonCards[i].classList.contains("hidden")) {
+                        pokemonCards[i].classList.remove("hidden");
+                        nextIndexToShow++;
+                    }
+                    if (nextIndexToShow >= 4) break; // Show only four Pokémon cards at a time
+                }
+
+                // Hide Load More button if all Pokémon cards are visible
+                if (document.querySelectorAll(".pokemon.hidden").length === 0) {
+                    loadMoreBtn.style.display = "none";
+                }
+            });
+        });
+    </script>      
 </body>
 </html>

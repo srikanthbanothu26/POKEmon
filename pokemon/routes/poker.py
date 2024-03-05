@@ -5,40 +5,53 @@ import requests
 from io import BytesIO
 from flask_login import current_user
 from PIL import Image
+
+
 poker_bp=Blueprint("poker",__name__)
 
 @poker_bp.route("/new", methods=["GET", "POST"])
 def new():
     form = MyForm(request.form)
+    pokemon_exists = False  # Initialize a variable to track if the Pokemon already exists
     if form.validate_on_submit():
         name = form.name.data
-        image_url = form.image_url.data
-        description = form.description.data
-        height = form.height.data
-        category = form.category.data
-        weight = form.weight.data
-        abilities = form.abilities.data
 
-        # Ensure current_user is authenticated before accessing its id
-        if current_user.is_authenticated:
-            user_id = current_user.id
+        # Check if a Pokémon with the given name already exists in the database
+        existing_pokemon = Pokemon.query.filter_by(name=name).first()
 
-            image_response = requests.get(image_url)
-            if image_response.status_code == 200:
-                image_data = BytesIO(image_response.content)
-                image = Image.open(image_data)
-                image_filename = f"{name.replace(' ', '_')}.png"
-                image_path = f"pokemon/static/images/{image_filename}" 
+        if existing_pokemon:
+            pokemon_exists = True  # Set the variable to True if the Pokemon already exists
+            flash("This Pokémon already exists!", "error")
+            return render_template("newpokemon.html", form=form, pokemon_exists=pokemon_exists)  # Pass pokemon_exists to the template
+        else:
+            image_url = form.image_url.data
+            description = form.description.data
+            height = form.height.data
+            category = form.category.data
+            weight = form.weight.data
+            abilities = form.abilities.data
 
-                image.save(image_path)
-            else:
-                image_path = None
+            # Ensure current_user is authenticated before accessing its id
+            if current_user.is_authenticated:
+                user_id = current_user.id
 
-            insert_pokemon_data(name, image_url, description, height, weight, category, abilities, image_path, user_id)
+                image_response = requests.get(image_url)
+                if image_response.status_code == 200:
+                    image_data = BytesIO(image_response.content)
+                    image = Image.open(image_data)
+                    image_filename = f"{name.replace(' ', '_')}.png"
+                    image_path = f"pokemon/static/images/{image_filename}" 
 
-            return redirect("/main")
+                    image.save(image_path)
+                else:
+                    image_path = None
 
-    return render_template("newpokemon.html", form=form)
+                insert_pokemon_data(name, image_url, description, height, weight, category, abilities, image_path, user_id)
+
+                flash("New Pokémon added successfully!", "success")
+                return redirect("/main")
+
+    return render_template("newpokemon.html", form=form, pokemon_exists=pokemon_exists)  # Pass pokemon_exists to the template
 
  
 @poker_bp.route("/update/<int:pokemon_id>", methods=["GET", "POST"])
@@ -64,10 +77,21 @@ def update(pokemon_id):
 
 
 @poker_bp.route("/delete/<int:pokemon_id>", methods=["POST"])
-def delete(pokemon_id):
+def delete_pokemon_data(pokemon_id):
+    # Retrieve the Pokemon object to check ownership
+    pokemon = fetch_pokemon_by_id(pokemon_id)
     
-    existing_data = fetch_pokemon_by_id(pokemon_id)
-    if existing_data.user_id != current_user.id:
-        abort(403)  
-    delete_pokemon_data(pokemon_id)
-    return redirect("/main")
+    # Check if the current user owns the Pokemon
+    if pokemon.user_id != current_user.id:
+        abort(403)  # Return a forbidden status if the user does not own the Pokemon
+
+    # Delete any associated likes for the Pokemon
+    likes = LIKE_S.query.filter_by(pokemon_id=pokemon_id).all()
+    for like in likes:
+        db.session.delete(like)
+
+    # Delete the Pokemon
+    db.session.delete(pokemon)
+    db.session.commit()
+    
+    return redirect("/main") 

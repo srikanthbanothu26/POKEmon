@@ -2,15 +2,32 @@ from flask import flash
 from pokemon.routes import *
 from pokemon.models.models import USER1, Pokemon,LIKE_S
 from pokemon.extensions.db import db
+from sqlalchemy.orm import Load
 
 def user_details(username):
-    return USER1.query.filter_by(name=username).options(db.load_only("id", "name", "email", "likes")).first()
+    """
+    Retrieve user details by username.
+    """
+    # Use class-bound attributes directly instead of strings
+    return USER1.query.filter_by(name=username).options(
+        Load(USER1).load_only(USER1.id, USER1.name, USER1.email)
+    ).first()
+
 
 def search_pokemon(search_term):
     """
     Search for Pokémon by name or ID.
     """
-    return Pokemon.query.filter((Pokemon.name.like(f'%{search_term}%')) | (Pokemon.id == search_term)).all()
+    # Try to convert the search term to an integer
+    try:
+        search_id = int(search_term)
+    except ValueError:
+        # If conversion fails, search by name
+        return Pokemon.query.filter(Pokemon.name.ilike(f'%{search_term}%')).all()
+    else:
+        # If conversion succeeds, search by ID
+        return Pokemon.query.filter_by(id=search_id).all()
+
 
 def insert_user(name, email,password,profile_image):
     user = USER1(name=name,email=email, password=password,profile_image=profile_image)  # Create a new instance of the USER class
