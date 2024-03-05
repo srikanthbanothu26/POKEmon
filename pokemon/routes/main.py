@@ -3,8 +3,8 @@ from flask_login import current_user,login_required
 from pokemon.oper.oper import search_pokemon, user_details, fetch_pokemon_details
 from pokemon.models.models import LIKE_S,Pokemon,USER1
 from pokemon.extensions.db import db
-main_bp = Blueprint("main", __name__)
 
+main_bp = Blueprint("main", __name__)
 @main_bp.route("/", methods=["GET", "POST"])
 def index():
     users = USER1.query.all()
