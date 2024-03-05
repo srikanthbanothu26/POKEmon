@@ -71,3 +71,29 @@
 .pro{
     overflow-x: scroll;
 }
+
+@keyframes moveTopToBottom {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+@keyframes moveBottomToTop {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+.animate-top-to-bottom {
+    animation: moveTopToBottom 0.5s ease-out forwards;
+}
+
+.animate-bottom-to-top {
+    animation: moveBottomToTop 0.5s ease-out forwards;
+}

@@ -12,8 +12,8 @@ def search_pokemon(search_term):
     """
     return Pokemon.query.filter((Pokemon.name.like(f'%{search_term}%')) | (Pokemon.id == search_term)).all()
 
-def insert_user(name, email,password):
-    user = USER1(name=name,email=email, password=password)  # Create a new instance of the USER class
+def insert_user(name, email,password,profile_image):
+    user = USER1(name=name,email=email, password=password,profile_image=profile_image)  # Create a new instance of the USER class
     db.session.add(user)  # Add the user instance to the session
     db.session.commit()  
                           # Commit the transaction to the database

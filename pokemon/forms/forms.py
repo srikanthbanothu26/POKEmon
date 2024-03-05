@@ -3,6 +3,7 @@ from wtforms import StringField, SubmitField, FloatField, TextAreaField, Passwor
 from wtforms.validators import DataRequired, Length,InputRequired,ValidationError,EqualTo
 import re
 from pokemon.models.models import USER1
+from flask_wtf.file import FileField, FileAllowed
 
 class MyForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
@@ -20,6 +21,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("email",validators=[DataRequired()],render_kw={"class": "border-2 -gray-300 rounded-lg p-2 w-80","placeholder": "email",},)
     password = PasswordField("Password", validators=[InputRequired(),Length(min=6),])
     cpassword = PasswordField("Confirm Password",  validators=[InputRequired(),EqualTo("password", message="passwords must match"),Length(min=6),],)
+    profile_image = FileField('Profile Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
     submit = SubmitField("Register")
     
     def validate_name(self,name):

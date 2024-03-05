@@ -38,7 +38,7 @@
             </div>
             <div class="flex items-center gap-x-2 bg-slate-500 rounded-full pr-2  text-white">
                 <!-- User Avatar -->
-                <img src="{{url_for('uploaded_file', filename=poke.user.profile_image) }}" alt="user" class="w-8 h-8 rounded-full border-2 border-slate-900 hover:border-sky-400 transition duration-300 cursor-pointer object-cover">
+                <img src="{{url_for('uploaded_file', filename=poke.user.profile_image) }}" alt="user" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" class="w-8 h-8 rounded-full border-2 border-slate-900 hover:border-sky-400 transition duration-300 cursor-pointer object-cover">
                 <p class="text-sm">{{ poke.user.name }}</p>
             </div>
             <h2 class="text-xl text-white">{{ poke.name }}</h2>
