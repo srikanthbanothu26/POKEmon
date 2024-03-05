@@ -39,7 +39,6 @@ def create_app():
     
     create_upload_folder(server)
     with server.app_context():
-        db.drop_all()
         db.create_all()  # Corrected missing parentheses to invoke the function
     
     return server
