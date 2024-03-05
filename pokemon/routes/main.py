@@ -42,15 +42,12 @@ def main():
 
     return render_template("main.html", details=details, user_details1=user_details1, pokemons=pokemons)
 
-# http://localhost:5000/like?id=3
 @main_bp.route("/like")
 @login_required
 def like_pokemon():
     poke_id = request.args.get("id")
     if not poke_id:
         return "No id found", 400
-
-    # Ensure poke_id is a valid integer
     try:
         poke_id = int(poke_id)
     except ValueError:
