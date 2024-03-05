@@ -1,6 +1,5 @@
 name: my-flask-app
 services:
   - name: web
-    image: my-flask-app-image
     run:
       command: gunicorn -b :$PORT run:app
