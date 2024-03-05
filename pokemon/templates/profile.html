@@ -10,70 +10,74 @@
 </head>
 <body class="text-black">
     <!-- Profile Section -->
-    <div class="grid grid-cols-1">
-        <div class="bg-red-700 h-96 w-56 grid grid-cols-1 justify-center items-center rounded-md">
-            <div class="pl-8 pr-8">
-                <div class="profile-image-container ml-16">
-                    {% if current_user.profile_image %}
-                    <img id="profile-image" src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-24 w-24 rounded-full" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
-                    {% else %}
-                    <img id="profile-image" src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-16 w-16 rounded-full" alt="Default Profile Image">
-                    {% endif %}
-                </div>
-                <button id="edit-profile-btn" class="ml-20 border-2 flex inline text-white rounded h-8 w-16">Update</button>
-                <input type="file" id="file-upload" accept="image/*" style="display: none;">
-                <button id="upload-btn" style="display: none;" class="bg-green-600">Upload</button>
-                <p class="mt-8">name:{{current_user.name}}<p>
-                <p>id:{{current_user.id}}</p>
-                <p class="pr-10">email:{{current_user.email}}</p>
-                <a href="/main" class="border border-white py-1 px-3 rounded-lg mt-8">LOGOUT</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pokémon Container -->
-    <div class="pokemoncontainer grid grid-cols-4 mt-4 justify-center text-black">
-        {% if user_pokemons %}
-            {% for poke in user_pokemons %}
-                <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center">
-                    <!-- Profile Image (if available) -->
+    <div class="flex flex-row">
+        <div class="flex justify-end right-0 fixed">
+            <div class="bg-red-700 h-96 w-56 grid grid-cols-1 justify-center items-center rounded-md">
+                <div class="pl-8 pr-8">
                     <div class="profile-image-container ml-16">
                         {% if current_user.profile_image %}
-                            <img id="profile-image" src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-24 w-24 rounded-full" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
+                        <img id="profile-image" src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-24 w-24 rounded-full" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
                         {% else %}
-                            <img id="profile-image" src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-16 w-16 rounded-full" alt="Default Profile Image">
+                        <img id="profile-image" src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-16 w-16 rounded-full" alt="Default Profile Image">
                         {% endif %}
                     </div>
-                    <!-- Pokemon Details -->
-                    <h2 class="heading bg-pink-600 text-xl">{{ poke.name }}</h2>
-                    <p class="id hover:text-blue-800">ID: {{ poke.id }}</p>
-                    <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md mb-4 h-52">
-                    <div class="h-36 mb-4">
-                        <p class="description inline">Description: {{ poke.description }}</p>
-                    </div>
-                    <div class="grid h-16">
-                        <p class="">Height: {{ poke.height }}</p>
-                        <p class="">Weight: {{ poke.weight }}</p>
-                    </div>
-                    <div class="grid h-16">
-                        <p class="">Category: {{ poke.category }}</p>
-                        <p class="">Abilities: {{ poke.abilities }}</p>
-                    </div>
-                    <!-- Delete and Update Buttons -->
-                    <div class="grid grid-cols-2 justify-between">
-                        <form onsubmit="return confirm('Are you sure you want to delete this Pokémon?');" method="post" action="/delete/{{ poke.id }}" class="mt-4">
-                            <button type="submit" class="p-2 bg-red-500 rounded-md">Delete Pokemon</button>
-                        </form>
-                        <form method="get" action="/update/{{ poke.id }}" class="mt-4">
-                            <button type="submit" class="p-2 bg-green-500 text-white rounded-md">Update Pokemon</button>
-                        </form>
-                    </div>
+                    <button id="edit-profile-btn" class="ml-20 border-2 flex inline text-white rounded h-8 w-16">Update</button>
+                    <input type="file" id="file-upload" accept="image/*" style="display: none;">
+                    <button id="upload-btn" style="display: none;" class="bg-green-600">Upload</button>
+                    <p class="mt-8">name:{{current_user.name}}<p>
+                    <p>id:{{current_user.id}}</p>
+                    <p class="pr-10">email:{{current_user.email}}</p>
+                    <a href="/main" class="border border-white py-1 px-3 rounded-lg mt-8">LOGOUT</a>
                 </div>
-            {% endfor %}
-        {% else %}
-            <div>No Pokémon data available.</div>
-        {% endif %}
-    </div>    
+            </div>
+        </div>
+        <!-- Pokémon Container -->
+        <div class="pokemoncontainer grid grid-cols-4 mt-4 justify-center items-center text-black">
+            {% if user_pokemons %}
+                {% for poke in user_pokemons %}
+                    <div class="pokemon border-2 border-black rounded-lg p-4 w-full mx-2 my-2 cursor-pointer text-center">
+                        <!-- Profile Image (if available) -->
+                        <div class="flex flex-row items-center justify-between bg-green-600 rounded-lg">
+                            <div class="profile-image-container ml-4">
+                                {% if current_user.profile_image %}
+                                    <img id="profile-image" src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-16 w-16 rounded-full" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
+                                {% else %}
+                                    <img id="profile-image" src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-16 w-16 rounded-full" alt="Default Profile Image">
+                                {% endif %}
+                            </div>
+                            <p class="pr-6">{{current_user.name}}</p>
+                        </div>
+                        <!-- Pokemon Details -->
+                        <h2 class="heading bg-pink-600 text-xl">{{ poke.name }}</h2>
+                        <p class="id hover:text-blue-800">ID: {{ poke.id }}</p>
+                        <img src="{{ poke.image_url }}" alt="{{ poke.name }}" class="w-full rounded-md mb-4 h-52">
+                        <div class="h-36 mb-4">
+                            <p class="description inline">Description: {{ poke.description }}</p>
+                        </div>
+                        <div class="grid h-16">
+                            <p class="">Height: {{ poke.height }}</p>
+                            <p class="">Weight: {{ poke.weight }}</p>
+                        </div>
+                        <div class="grid h-16">
+                            <p class="">Category: {{ poke.category }}</p>
+                            <p class="">Abilities: {{ poke.abilities }}</p>
+                        </div>
+                        <!-- Delete and Update Buttons -->
+                        <div class="grid grid-cols-2 justify-between">
+                            <form onsubmit="return confirm('Are you sure you want to delete this Pokémon?');" method="post" action="/delete/{{ poke.id }}" class="mt-4">
+                                <button type="submit" class="p-2 bg-red-500 rounded-md">Delete Pokemon</button>
+                            </form>
+                            <form method="get" action="/update/{{ poke.id }}" class="mt-4">
+                                <button type="submit" class="p-2 bg-green-500 text-white rounded-md">Update Pokemon</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div>No Pokémon data available.</div>
+            {% endif %}
+        </div>
+    <div>   
     <script>
         document.getElementById('upload-btn').addEventListener('click', function() {
             var fileInput = document.getElementById('file-upload');
