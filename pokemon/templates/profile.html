@@ -28,7 +28,7 @@
                         {% if current_user.profile_image %}
                         <img id="profile-image" src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-24 w-24 rounded-full mx-auto" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
                         {% else %}
-                        <img id="profile-image" src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-16 w-16 rounded-full mx-auto" alt="Default Profile Image">
+                        <img id="profile-image" src="{{ url_for('static', filename='profile_pics/profile.png') }}" class="h-16 w-16 rounded-full mx-auto" alt="Default Profile Image">
                         {% endif %}
                     </div>
                     <button id="edit-profile-btn" class="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2 mb-4">Update</button>
@@ -41,7 +41,7 @@
                     <p class="text-lg pb-4">Total Likes: {{total_likes}}</p>
                     <a href="/main" class="block bg-gray-700 hover:bg-gray-800 text-white text-center py-2 px-4 rounded-lg">BACK</a>
                     <form onsubmit="return confirm('Are you sure you want to delete your Account?');" method="post" action="/delete_account">
-                        <button type="submit" class="bg-red-500 text-white rounded-md px-4 py-1 pr-6 mr-6">Delete</button>
+                        <button type="submit" class="bg-red-500 text-white rounded-md px-4 py-1 pr-6 mr-6 mt-10">Delete Account</button>
                     </form>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                         {% if current_user.profile_image %}
                         <img src="{{ url_for('static', filename='profile_pics/' + current_user.profile_image) }}" class="h-12 w-12 rounded-full" alt="{{ current_user.name }}'s Profile Image" onerror="this.onerror=null;this.src='{{ url_for('static', filename='profile_pics/profile.png') }}';" />
                         {% else %}
-                        <img src="{{ url_for('static', filename='profile_pics/default.png') }}" class="h-12 w-12 rounded-full" alt="Default Profile Image">
+                        <img src="{{ url_for('static', filename='profile_pics/profile.png') }}" class="h-12 w-12 rounded-full" alt="Default Profile Image">
                         {% endif %}
                     </div>
                     <div class="text-sm text-gray-700">
