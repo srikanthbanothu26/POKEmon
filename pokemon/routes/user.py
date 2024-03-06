@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, request, current_app,jsonify
+from flask import render_template, Blueprint, request, current_app,jsonify,redirect,flash
 from flask_login import current_user
 from pokemon.oper.oper import fetch_user_pokemon
 from werkzeug.utils import secure_filename
@@ -67,3 +67,22 @@ def upload_profile_image():
             return jsonify({'success': False, 'message': 'Failed to upload profile image'}), 500
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
+
+@user_bp.route('/delete_account', methods=['GET', 'POST'])
+@login_required
+def delete_account():
+    # Delete related records in the Pokemon table
+    user_pokemons = Pokemon.query.filter_by(user_id=current_user.id).all()
+    for pokemon in user_pokemons:
+        db.session.delete(pokemon)
+    
+    # Delete user account
+    user = current_user
+    db.session.delete(user)
+    db.session.commit()
+    
+    # Flash a success message
+    flash('Account deleted successfully', 'success')
+    
+    # Redirect to the home page after account deletion
+    return redirect('/') 

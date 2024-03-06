@@ -40,6 +40,9 @@
                     <p class="text-lg">Added: {{ current_user.pokemons|length }}</p>
                     <p class="text-lg pb-4">Total Likes: {{total_likes}}</p>
                     <a href="/main" class="block bg-gray-700 hover:bg-gray-800 text-white text-center py-2 px-4 rounded-lg">BACK</a>
+                    <form onsubmit="return confirm('Are you sure you want to delete your Account?');" method="post" action="/delete_account">
+                        <button type="submit" class="bg-red-500 text-white rounded-md px-4 py-1 pr-6 mr-6">Delete</button>
+                    </form>
                 </div>
             </div>
         </div>
