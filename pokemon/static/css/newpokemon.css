@@ -2,6 +2,7 @@ body{
     color: blue;
     background-color: gray;
 }
+/*box container*/
 .form-box {
     max-width: 400px;
     margin: auto; 
