@@ -31,7 +31,7 @@ def create_app():
     db.init_app(server)
     migration.init_app(server, db)
     login_manager.init_app(server)
-    register_upload_route(server)  # Register the upload route
+    # Register the upload route
     @login_manager.user_loader
     
     def load_user(user_id):
@@ -42,9 +42,4 @@ def create_app():
         db.create_all()  # Corrected missing parentheses to invoke the function
     
     return server
-
-def register_upload_route(app):
-    @app.route('/uploads/<filename>')
-    def uploaded_file(filename):
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
